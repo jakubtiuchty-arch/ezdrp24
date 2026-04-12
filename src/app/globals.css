@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-violet-600: #7c3aed;
+  --color-violet-700: #6d28d9;
+  --color-emerald-500: #10b981;
+}
+
+@layer base {
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-violet-600), 0 0 0 4px white;
+  }
+}
+
+.carousel-track {
+  display: flex;
+  width: max-content;
+  animation: scroll-left 40s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
