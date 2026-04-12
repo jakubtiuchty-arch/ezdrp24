@@ -5,12 +5,28 @@ import { Shield, UserCheck, Lock, Eye, FileText, Scale } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Polityka Prywatności | Scanter Sp. z o.o.",
-  description: "Zasady przetwarzania danych osobowych i polityka cookies.",
+  description: "Zasady przetwarzania danych osobowych i polityka cookies serwisu ezdrp24.com.pl. Administrator: Scanter Sp. z o.o.",
+  alternates: {
+    canonical: "https://ezdrp24.com.pl/polityka-prywatnosci",
+  },
 };
 
 export default function PrivacyPolicy() {
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://ezdrp24.com.pl" },
+      { "@type": "ListItem", "position": 2, "name": "Polityka Prywatności", "item": "https://ezdrp24.com.pl/polityka-prywatnosci" }
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans bg-slate-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <Header />
       
       {/* Header Sekcji */}

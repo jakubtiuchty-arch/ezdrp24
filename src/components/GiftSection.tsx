@@ -45,22 +45,17 @@ export function GiftSection() {
           )}
         >
           <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-emerald-100">
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 text-left">
+            <div className="grid sm:grid-cols-2 gap-4 text-left">
               {[
-                {
-                  title: "Etykiety 80×50 mm",
-                  desc: "Na teczki i segregatory",
-                  items: ["1000 szt. na rolce", "Papier termotransferowy", "Wartość: ~80 zł"],
-                },
                 {
                   title: "Etykiety 50×30 mm",
                   desc: "Na paczki i przesyłki",
-                  items: ["1000 szt. na rolce", "Papier termotransferowy", "Wartość: ~60 zł"],
+                  items: ["2 szt. po 1000 szt. na rolce", "Papier termotransferowy", "Wartość: ~120 zł"],
                 },
                 {
                   title: "Taśma termotransferowa",
                   desc: "Premium wax-resin",
-                  items: ["Szerokość 110 mm", "Długość 74 m", "Wartość: ~70 zł"],
+                  items: ["2 sztuki w zestawie", "Szerokość 110 mm, długość 74 m", "Wartość: ~140 zł"],
                 },
               ].map((gift, idx) => (
                 <div key={idx} className="bg-emerald-50/50 rounded-lg p-4 border border-emerald-100">
