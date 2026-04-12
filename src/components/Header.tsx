@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, Mail, ShieldCheck } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 
 export function Header() {

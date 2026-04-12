@@ -106,7 +106,17 @@ export function Products() {
   );
 }
 
-function ProductCard({ title, category, description, features, images, placeholderColor, badge }: any) {
+interface ProductCardProps {
+  title: string;
+  category: string;
+  description: string;
+  features: (string | { text: string; tooltip: string })[];
+  images?: string[];
+  placeholderColor: string;
+  badge?: { text: string; videoUrl: string; start: number; end: number };
+}
+
+function ProductCard({ title, category, description, features, images, placeholderColor, badge }: ProductCardProps) {
   const [currentImage, setCurrentImage] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const videoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

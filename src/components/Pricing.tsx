@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 

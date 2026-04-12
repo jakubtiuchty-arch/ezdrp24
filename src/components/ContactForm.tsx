@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Loader2, Phone, Check, Home, ArrowRight, X } from "lucide-react";
+import { Loader2, Phone, Check, Home, ArrowRight, X } from "lucide-react";
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);

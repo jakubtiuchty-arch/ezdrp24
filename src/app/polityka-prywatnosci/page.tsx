@@ -134,7 +134,7 @@ export default function PrivacyPolicy() {
               <div>
                 <h2 className="text-xl font-bold text-slate-900 mb-3">4. Pliki Cookies</h2>
                 <p className="text-slate-600 leading-relaxed mb-4">
-                  Nasza strona używa plików cookies ("ciasteczka") w celu zapewnienia poprawnego działania serwisu oraz w celach statystycznych (Google Analytics). Nie wykorzystujemy cookies do śledzenia Twojej aktywności poza naszą witryną w celach reklamowych (remarketing).
+                  Nasza strona używa plików cookies (&bdquo;ciasteczka&rdquo;) w celu zapewnienia poprawnego działania serwisu oraz w celach statystycznych (Google Analytics). Nie wykorzystujemy cookies do śledzenia Twojej aktywności poza naszą witryną w celach reklamowych (remarketing).
                 </p>
                 <div className="bg-amber-50 border border-amber-100 rounded-lg p-4 text-sm text-amber-900">
                   Możesz w każdej chwili zmienić ustawienia dotyczące cookies w swojej przeglądarce internetowej.
