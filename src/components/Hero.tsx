@@ -11,7 +11,7 @@ export function Hero({ cityName }: HeroProps) {
     <section className="relative overflow-hidden min-h-[500px] lg:min-h-[600px]">
       {/* Background Image */}
       <Image
-        src="/hero_ezd_1.jpeg"
+        src="/hero_ezd_1.webp"
         alt="Zestaw sprzętu EZD RP - skaner, drukarka etykiet, czytnik kodów"
         fill
         className="object-cover object-[75%_70%] lg:object-[center_70%]"
