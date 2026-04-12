@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Metadata } from "next";
-import { Shield, UserCheck, Lock, Eye, FileText, Scale } from "lucide-react";
+import { Shield, Lock, Eye, FileText, Scale } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Polityka Prywatności | Scanter Sp. z o.o.",

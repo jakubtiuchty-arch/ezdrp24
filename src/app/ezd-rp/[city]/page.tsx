@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { Metadata } from "next";
 import { cities } from "@/lib/cities";
 import { Header } from "@/components/Header";
@@ -118,7 +119,7 @@ export default async function CityPage({ params }: Props) {
         <nav aria-label="Breadcrumb" className="bg-white border-b border-slate-200 py-2">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ol className="flex items-center gap-2 text-xs text-slate-500">
-              <li><a href="/" className="hover:text-violet-600 transition-colors">Strona główna</a></li>
+              <li><Link href="/" className="hover:text-violet-600 transition-colors">Strona główna</Link></li>
               <li>/</li>
               <li className="text-slate-800 font-medium">EZD RP {cityData.name}</li>
             </ol>
