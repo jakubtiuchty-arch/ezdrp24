@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, HelpCircle, ServerCog } from "lucide-react";
+import { ChevronDown, ServerCog } from "lucide-react";
 import clsx from "clsx";
 
 export function TechFAQ() {

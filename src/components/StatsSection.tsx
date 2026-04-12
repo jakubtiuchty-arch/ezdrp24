@@ -1,20 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 export function StatsSection() {
-  const [count, setCount] = useState(159);
-
-  useEffect(() => {
+  const count = useMemo(() => {
     const baseDate = new Date('2025-10-20');
     const baseCount = 159;
     const dailyIncrease = 3;
     const today = new Date();
-    
     const daysPassed = Math.floor((today.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
-    const increase = daysPassed > 0 ? daysPassed * dailyIncrease : 0;
-    
-    setCount(baseCount + increase);
+    return baseCount + (daysPassed > 0 ? daysPassed * dailyIncrease : 0);
   }, []);
 
   return (
