@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
@@ -17,6 +20,36 @@ export async function POST(req: Request) {
         rfq: body.rfq || false,
       },
     });
+
+    // Powiadomienie email
+    const notifyEmail = process.env.NOTIFY_EMAIL;
+    if (notifyEmail) {
+      try {
+        await resend.emails.send({
+          from: "EZD RP <onboarding@resend.dev>",
+          to: notifyEmail,
+          subject: `Nowe zapytanie EZD RP — ${body.name || body.email}${body.rfq ? " [RFQ]" : ""}`,
+          html: `
+            <h2>Nowe zapytanie ofertowe</h2>
+            <table style="border-collapse:collapse;width:100%;max-width:500px;">
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Imię i nazwisko</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">${body.name || "—"}</td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Instytucja</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">${body.org || "—"}</td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Email</td><td style="padding:8px;border-bottom:1px solid #eee;"><a href="mailto:${body.email}">${body.email}</a></td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Telefon</td><td style="padding:8px;border-bottom:1px solid #eee;"><a href="tel:${body.phone || ""}">${body.phone || "—"}</a></td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Województwo</td><td style="padding:8px;border-bottom:1px solid #eee;">${body.voivodeship || "—"}</td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Wariant</td><td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold;">${body.variant || "—"}</td></tr>
+              <tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">RFQ</td><td style="padding:8px;border-bottom:1px solid #eee;">${body.rfq ? "✅ Tak" : "Nie"}</td></tr>
+              ${body.notes ? `<tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Uwagi</td><td style="padding:8px;border-bottom:1px solid #eee;">${body.notes}</td></tr>` : ""}
+            </table>
+            <p style="margin-top:16px;color:#999;font-size:12px;">
+              <a href="https://ezdrp24.com.pl/admin">Otwórz panel administracyjny</a>
+            </p>
+          `,
+        });
+      } catch (emailErr) {
+        console.error("Email send error:", emailErr);
+      }
+    }
 
     return NextResponse.json({ success: true, id: inquiry.id });
   } catch (err) {
