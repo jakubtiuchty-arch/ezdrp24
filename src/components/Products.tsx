@@ -26,17 +26,19 @@ export function Products() {
             <ProductCard
               title="Zebra DS2208"
               category="Skaner przewodowy"
+              altPrefix="Zebra DS2208 czytnik kodów do EZD"
               description="Niezawodny skaner biurkowy do szybkiej rejestracji wpływów w EZD. Odczytuje kody z kopert i naklejek."
               features={["Szybki odczyt kodów RPW", "Odporny na upadki", "Plug & Play (USB)"]}
-              images={["/ds2208_1.png", "/ds2208_2.png", "/ds2208_3.png"]}
+              images={["/ds2208_1.webp", "/ds2208_2.webp", "/ds2208_3.webp"]}
               placeholderColor="bg-blue-50"
             />
             <ProductCard
               title="Zebra DS2278"
               category="Skaner bezprzewodowy"
+              altPrefix="Zebra DS2278 czytnik kodów bezprzewodowy do EZD"
               description="Mobilność w sekretariacie. Idealny czytnik EZD do skanowania dużych paczek i pracy przy oknie podawczym."
               features={["Zasięg Bluetooth do 10m", "Praca na baterii do 14h", "Stacja dokująca w zestawie"]}
-              images={["/ds2278_1.png", "/ds2278_2.png", "/ds2278_3.png", "/ds2278_4.png"]}
+              images={["/ds2278_1.webp", "/ds2278_2.webp", "/ds2278_3.webp", "/ds2278_4.webp"]}
               placeholderColor="bg-emerald-50"
             />
           </div>
@@ -51,17 +53,19 @@ export function Products() {
             <ProductCard
               title="Zebra ZD230t"
               category="Drukarka biurowa"
+              altPrefix="Zebra ZD230t drukarka etykiet do EZD"
               description="Ekonomiczna drukarka EZD do podstawowych zastosowań. Idealna do etykietowania teczek aktowych."
               features={["Szerokość druku 104mm", "Zgodność z kodami kreskowymi", "Trwały druk termotransferowy"]}
-              images={["/zd230_1.png", "/zd230_2.png", "/zd230_3.png"]}
+              images={["/zd230_1.webp", "/zd230_2.webp", "/zd230_3.webp"]}
               placeholderColor="bg-gray-50"
             />
             <ProductCard
               title="Zebra ZD421t"
               category="Drukarka Premium"
+              altPrefix="Zebra ZD421t drukarka etykiet premium do EZD"
               description="Zaawansowana drukarka kodów do EZD dla większych wolumenów. Szybsza praca i opcjonalna obsługa sieci."
               features={["Wysoka prędkość druku", "Ruchomy czujnik etykiet", "Intuicyjna obsługa wkładów"]}
-              images={["/zd421_1.png", "/zd421_2.png", "/zd421_3.png"]}
+              images={["/zd421_1.webp", "/zd421_2.webp", "/zd421_3.webp"]}
               placeholderColor="bg-indigo-50"
               badge={{
                 text: "Najwygodniejsza wymiana taśmy — system cartridge",
@@ -82,21 +86,23 @@ export function Products() {
             <ProductCard
               title="Epson DS-730DN"
               category="Skaner sieciowy"
+              altPrefix="Epson DS-730DN skaner dokumentów do EZD"
               description="Wydajny skaner do EZD z podajnikiem ADF. Skanuje do PDF/A z OCR, niezbędny w procesie cyfryzacji akt."
               features={["40 stron / minutę", "Skanowanie dwustronne", "Zgodność z sterownikami EZD"]}
-              images={["/ds730_1.png", "/ds730_2.png"]}
+              images={["/ds730_1.webp", "/ds730_2.webp"]}
               placeholderColor="bg-slate-50"
             />
             <ProductCard
               title="Epson DS-790Wn"
               category="Skaner z ekranem"
+              altPrefix="Epson DS-790Wn skaner dokumentów z ekranem do EZD"
               description="Samodzielny skaner EZD z dużym ekranem dotykowym. Idealny do pracy grupowej bez podłączania do PC."
               features={[
                 "Duży ekran dotykowy",
                 "Skanowanie do folderu sieciowego",
                 { text: "Integracja z DocuScan", tooltip: "DocuScan to oprogramowanie Epson umożliwiające skanowanie bezpośrednio do systemu EZD RP — bez pośrednictwa komputera." }
               ]}
-              images={["/ds790_1.png", "/ds790_2.png"]}
+              images={["/ds790_1.webp", "/ds790_2.webp"]}
               placeholderColor="bg-violet-50"
             />
           </div>
@@ -109,6 +115,7 @@ export function Products() {
 interface ProductCardProps {
   title: string;
   category: string;
+  altPrefix?: string;
   description: string;
   features: (string | { text: string; tooltip: string })[];
   images?: string[];
@@ -116,7 +123,7 @@ interface ProductCardProps {
   badge?: { text: string; videoUrl: string; start: number; end: number };
 }
 
-function ProductCard({ title, category, description, features, images, placeholderColor, badge }: ProductCardProps) {
+function ProductCard({ title, category, altPrefix, description, features, images, placeholderColor, badge }: ProductCardProps) {
   const [currentImage, setCurrentImage] = useState(0);
   const [showVideo, setShowVideo] = useState(false);
   const videoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -145,7 +152,7 @@ function ProductCard({ title, category, description, features, images, placehold
               <Image
                 key={src}
                 src={src}
-                alt={`${title} - zdjęcie ${idx + 1}`}
+                alt={`${altPrefix || title} - widok ${idx + 1}`}
                 fill
                 className={`object-contain p-2 transition-opacity duration-700 ${
                   idx === currentImage ? "opacity-100" : "opacity-0"

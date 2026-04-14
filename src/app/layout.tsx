@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
-  title: "Sprzęt do EZD RP - Zestawy: Skanery, Drukarki Etykiet, Czytniki Kodów",
+  title: "Sprzęt EZD RP — Skanery, Drukarki, Czytniki dla Urzędów",
   description: "Kompletne stanowiska pracy dla systemu EZD RP. Skanery OCR (PDF/A), drukarki etykiet do składu chronologicznego, czytniki do RPW. Zgodność z NASK. Sprawdź ofertę dla urzędów.",
   keywords: ["EZD RP", "system EZD RP", "skaner do EZD", "drukarka etykiet EZD", "czytnik kodów kreskowych", "skład chronologiczny", "RPW", "NASK", "cyfryzacja urzędu", "zestaw ezd"],
   authors: [{ name: "Scanter Sp. z o.o." }],
