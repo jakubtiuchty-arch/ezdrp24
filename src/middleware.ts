@@ -1,24 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const auth = req.headers.get("authorization");
+  const token = req.cookies.get("admin_token")?.value;
 
-  if (auth) {
-    const [, encoded] = auth.split(" ");
-    const decoded = atob(encoded);
-    const [user, password] = decoded.split(":");
-
-    if (user === process.env.ADMIN_USER && password === process.env.ADMIN_PASSWORD) {
-      return NextResponse.next();
-    }
+  if (token === process.env.ADMIN_PASSWORD) {
+    return NextResponse.next();
   }
 
-  return new NextResponse("Unauthorized", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Admin Panel"',
-    },
-  });
+  // Nie blokuj API logowania
+  if (req.nextUrl.pathname === "/admin/login") {
+    return NextResponse.next();
+  }
+
+  if (req.nextUrl.pathname.startsWith("/api/admin")) {
+    return NextResponse.next();
+  }
+
+  return NextResponse.redirect(new URL("/admin/login", req.url));
 }
 
 export const config = {
