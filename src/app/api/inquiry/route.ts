@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     if (notifyEmail) {
       try {
         await resend.emails.send({
-          from: "EZD RP <onboarding@resend.dev>",
+          from: "EZD RP Zapytania <zapytania@ezdrp24.com.pl>",
           to: notifyEmail,
           subject: `Nowe zapytanie EZD RP — ${body.name || body.email}${body.rfq ? " [RFQ]" : ""}`,
           html: `
