@@ -1,37 +1,13 @@
-"use client";
+import { prisma } from "@/lib/prisma";
+import { Mail, Phone, Building2, FileText, Clock, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
-import { useCallback, useEffect, useState } from "react";
-import { Mail, Phone, Building2, FileText, Clock, CheckCircle, RefreshCw } from "lucide-react";
+export const dynamic = "force-dynamic";
 
-interface Inquiry {
-  id: string;
-  name: string | null;
-  org: string | null;
-  email: string;
-  phone: string | null;
-  voivodeship: string | null;
-  variant: string | null;
-  notes: string | null;
-  rfq: boolean;
-  read: boolean;
-  createdAt: string;
-}
-
-export default function AdminPage() {
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchInquiries = useCallback(async () => {
-    setLoading(true);
-    const res = await fetch("/api/inquiry");
-    const data = await res.json();
-    setInquiries(data);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    fetchInquiries();
-  }, [fetchInquiries]);
+export default async function AdminPage() {
+  const inquiries = await prisma.inquiry.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -41,16 +17,15 @@ export default function AdminPage() {
             <h1 className="text-2xl font-bold text-slate-900">Zapytania ofertowe</h1>
             <p className="text-sm text-slate-500 mt-1">{inquiries.length} zapytań łącznie</p>
           </div>
-          <button
-            onClick={fetchInquiries}
+          <Link
+            href="/admin"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             Odśwież
-          </button>
+          </Link>
         </div>
 
-        {inquiries.length === 0 && !loading && (
+        {inquiries.length === 0 && (
           <div className="text-center py-16 text-slate-400">
             <Mail className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg">Brak zapytań</p>
