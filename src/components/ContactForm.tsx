@@ -259,16 +259,6 @@ export function ContactForm() {
                 </span>
               </label>
               
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  id="rfq" 
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-violet-700 focus:ring-violet-700" 
-                />
-                <span className="text-sm text-slate-700">
-                  Chcę ofertę w trybie zapytania ofertowego (RFQ).
-                </span>
-              </label>
             </div>
 
             <div className="mt-2 flex flex-wrap gap-3">
