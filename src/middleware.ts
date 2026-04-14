@@ -6,9 +6,9 @@ export function middleware(req: NextRequest) {
   if (auth) {
     const [, encoded] = auth.split(" ");
     const decoded = atob(encoded);
-    const [, password] = decoded.split(":");
+    const [user, password] = decoded.split(":");
 
-    if (password === process.env.ADMIN_PASSWORD) {
+    if (user === process.env.ADMIN_USER && password === process.env.ADMIN_PASSWORD) {
       return NextResponse.next();
     }
   }
