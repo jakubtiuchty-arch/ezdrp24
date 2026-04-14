@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Star } from "lucide-react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
@@ -109,11 +108,11 @@ export function Pricing() {
                 ))}
               </ul>
 
-              <Link
-                href={`#formularz?wariant=${plan.name}`}
+              <button
                 onClick={() => {
                   const el = document.getElementById("variant") as HTMLSelectElement | null;
                   if (el) el.value = plan.name;
+                  document.getElementById("formularz")?.scrollIntoView({ behavior: "smooth" });
                 }}
                 className={clsx(
                   "w-full text-center py-3 rounded-xl font-bold transition-all transform hover:-translate-y-0.5",
@@ -123,7 +122,7 @@ export function Pricing() {
                 )}
               >
                 Wybierz {plan.name}
-              </Link>
+              </button>
             </div>
           ))}
         </div>
