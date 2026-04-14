@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Mail, Phone, Building2, FileText, Clock, CheckCircle, RefreshCw } from "lucide-react";
 
 interface Inquiry {
@@ -21,17 +21,17 @@ export default function AdminPage() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchInquiries = async () => {
+  const fetchInquiries = useCallback(async () => {
     setLoading(true);
     const res = await fetch("/api/inquiry");
     const data = await res.json();
     setInquiries(data);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchInquiries();
-  }, []);
+  }, [fetchInquiries]);
 
   return (
     <div className="min-h-screen bg-slate-50">
