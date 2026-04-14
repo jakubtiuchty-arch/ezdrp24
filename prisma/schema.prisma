@@ -1,14 +1,142 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id               String           @id @default(cuid())
+  email            String           @unique
+  password         String
+  organizationName String           @map("organization_name")
+  nip              String?
+  regon            String?
+  street           String?
+  postalCode       String?          @map("postal_code")
+  city             String?
+  contactPerson    String?          @map("contact_person")
+  phone            String?
+  isActive         Boolean          @default(true)
+  isVerified       Boolean          @default(false)
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  orders           Order[]
+  devices          Device[]
+  serviceRequests  ServiceRequest[]
+
+  @@map("users")
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  orderNumber      String      @unique @map("order_number")
+  status           String      @default("PENDING")
+  notes            String?
+  deliveryStreet   String?     @map("delivery_street")
+  deliveryPostalCode String?   @map("delivery_postal_code")
+  deliveryCity     String?     @map("delivery_city")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  userId           String      @map("user_id")
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items            OrderItem[]
+  invoice          Invoice?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  productId   String @map("product_id")
+  productSku  String @map("product_sku")
+  productName String @map("product_name")
+  quantity    Int
+  unit        String @default("szt.")
+  unitPrice   Float? @map("unit_price")
+  orderId     String @map("order_id")
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique @map("invoice_number")
+  issueDate     DateTime @map("issue_date")
+  dueDate       DateTime? @map("due_date")
+  netAmount     Float    @map("net_amount")
+  vatAmount     Float    @map("vat_amount")
+  grossAmount   Float    @map("gross_amount")
+  paymentStatus String   @default("UNPAID") @map("payment_status")
+  paidAt        DateTime? @map("paid_at")
+  fileUrl       String?  @map("file_url")
+  subiektId     String?  @map("subiekt_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  orderId       String   @unique @map("order_id")
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+model Device {
+  id            String           @id @default(cuid())
+  name          String
+  type          String
+  serialNumber  String?          @map("serial_number")
+  purchaseDate  DateTime?        @map("purchase_date")
+  warrantyUntil DateTime?        @map("warranty_until")
+  isActive      Boolean          @default(true)
+  notes         String?
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+  userId        String           @map("user_id")
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceRequests ServiceRequest[]
+
+  @@map("devices")
+}
+
+model ServiceRequest {
+  id                  String    @id @default(cuid())
+  requestNumber       String    @unique @map("request_number")
+  problemDescription  String    @map("problem_description")
+  pickupStreet        String    @map("pickup_street")
+  pickupPostalCode    String    @map("pickup_postal_code")
+  pickupCity          String    @map("pickup_city")
+  pickupPhone         String    @map("pickup_phone")
+  pickupContactPerson String?   @map("pickup_contact_person")
+  preferredPickupDate DateTime? @map("preferred_pickup_date")
+  status              String    @default("NEW")
+  courierOrderId      String?   @map("courier_order_id")
+  trackingNumber      String?   @map("tracking_number")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  userId              String    @map("user_id")
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceId            String?   @map("device_id")
+  device              Device?   @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  @@map("service_requests")
+}
+
+model Inquiry {
+  id          String   @id @default(cuid())
+  name        String?
+  org         String?
+  email       String
+  phone       String?
+  voivodeship String?
+  variant     String?
+  notes       String?
+  rfq         Boolean  @default(false)
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("inquiries")
 }

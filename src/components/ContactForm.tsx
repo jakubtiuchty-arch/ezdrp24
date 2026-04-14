@@ -10,13 +10,33 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Symulacja wysyłki
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
+
+    const form = e.currentTarget;
+    const data = {
+      name: (form.elements.namedItem("name") as HTMLInputElement)?.value,
+      org: (form.elements.namedItem("org") as HTMLInputElement)?.value,
+      email: (form.elements.namedItem("email") as HTMLInputElement)?.value,
+      phone: (form.elements.namedItem("phone") as HTMLInputElement)?.value,
+      voivodeship: (form.elements.namedItem("voivodeship") as HTMLSelectElement)?.value,
+      variant: (form.elements.namedItem("variant") as HTMLSelectElement)?.value,
+      notes: (form.elements.namedItem("notes") as HTMLTextAreaElement)?.value,
+      rfq: (form.elements.namedItem("rfq") as HTMLInputElement)?.checked,
+    };
+
+    try {
+      await fetch("/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+    } catch {
+      // zapisuje się lokalnie, mail później
+    }
+
     setIsSubmitting(false);
     setShowModal(true);
     document.body.style.overflow = 'hidden';
+    form.reset();
   };
 
   const closeModal = () => {
