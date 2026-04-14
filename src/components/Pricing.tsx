@@ -110,7 +110,11 @@ export function Pricing() {
               </ul>
 
               <Link
-                href="#formularz"
+                href={`#formularz?wariant=${plan.name}`}
+                onClick={() => {
+                  const el = document.getElementById("variant") as HTMLSelectElement | null;
+                  if (el) el.value = plan.name;
+                }}
                 className={clsx(
                   "w-full text-center py-3 rounded-xl font-bold transition-all transform hover:-translate-y-0.5",
                   plan.isPopular
