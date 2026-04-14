@@ -57,7 +57,7 @@ export default function RootLayout({
     "@type": "Organization",
     "name": "Scanter Sp. z o.o.",
     "url": "https://ezdrp24.com.pl",
-    "logo": "https://ezdrp24.com.pl/og-image.png",
+    "logo": "https://ezdrp24.com.pl/ezdrp_logo.png",
     "email": "biuro@scanter.pl",
     "description": "Dostawca sprzętu do Elektronicznego Zarządzania Dokumentacją (EZD RP) dla administracji publicznej.",
     "contactPoint": {
