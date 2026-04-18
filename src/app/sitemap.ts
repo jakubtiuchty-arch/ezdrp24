@@ -20,6 +20,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    // Strony produktowe
+    {
+      url: `${baseUrl}/ezd-rp/drukarki`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/ezd-rp/czytniki`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/ezd-rp/skanery`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     // Polityka prywatności
     {
       url: `${baseUrl}/polityka-prywatnosci`,
