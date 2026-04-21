@@ -1,11 +1,11 @@
 // Produkty i ceny (w groszach)
 const PRODUCTS: Record<string, { name: string; description: string; price: number }> = {
-  "DS2208": { name: "Zebra DS2208", description: "Czytnik kodów kreskowych 1D/2D, przewodowy USB, Plug & Play", price: 449_00 },
-  "DS2278": { name: "Zebra DS2278", description: "Czytnik kodów kreskowych 1D/2D, bezprzewodowy Bluetooth, zasięg 10m", price: 999_00 },
-  "ZD230t": { name: "Zebra ZD230t", description: "Drukarka etykiet termotransferowa, 203 dpi, USB", price: 1101_00 },
-  "ZD421t": { name: "Zebra ZD421t", description: "Drukarka etykiet termotransferowa premium, cartridge, 203/300 dpi", price: 1850_00 },
-  "DS-730DN": { name: "Epson DS-730DN", description: "Skaner dokumentów 40 str./min, duplex, OCR, PDF/A, Ethernet", price: 1649_00 },
-  "DS-790Wn": { name: "Epson DS-790Wn", description: "Skaner dokumentów 45 str./min, ekran dotykowy, Wi-Fi, DocuScan", price: 2750_00 },
+  "DS2208": { name: "Skaner kodów kreskowych Zebra DS2208", description: "", price: 449_00 },
+  "DS2278": { name: "Skaner kodów kreskowych Zebra DS2278", description: "", price: 999_00 },
+  "ZD230t": { name: "Drukarka etykiet Zebra ZD230t", description: "", price: 1101_00 },
+  "ZD421t": { name: "Drukarka etykiet Zebra ZD421t", description: "", price: 1850_00 },
+  "DS-730DN": { name: "Skaner Epson DS-730DN", description: "", price: 1649_00 },
+  "DS-790Wn": { name: "Skaner Epson DS-790Wn", description: "", price: 2750_00 },
 };
 
 const VARIANTS: Record<string, string[]> = {
@@ -65,7 +65,6 @@ export function buildOfferPdfHtml(opts: {
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;color:#64748b;">${i + 1}</td>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
         <div style="font-weight:700;color:#0f172a;font-size:12px;">${escapeHtml(p.name)}</div>
-        <div style="font-size:10px;color:#64748b;margin-top:3px;">${escapeHtml(p.description)}</div>
       </td>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">1 szt.</td>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(p.price)} zł</td>
@@ -280,7 +279,7 @@ export function buildOfferEmailHtml(opts: {
 
       <!-- CTA -->
       <div style="text-align:center;margin:32px 0;">
-        <a href="${opts.offerLink}" style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#ffffff;padding:16px 40px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.3px;">Pobierz ofertę PDF</a>
+        <a href="${opts.offerLink}" style="display:inline-block;background:#7c3aed;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.3px;border:2px solid #6d28d9;">Pobierz ofertę PDF</a>
         <p style="margin:10px 0 0;font-size:12px;color:#94a3b8;">Oferta otworzy się w przeglądarce — zapisz jako PDF przez Drukuj (Ctrl+P)</p>
       </div>
 
