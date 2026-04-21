@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Mail, Phone, Building2, FileText, Clock, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { SendOfferButton } from "./SendOfferButton";
 
 export const dynamic = "force-dynamic";
 
@@ -60,6 +61,9 @@ export default async function AdminPage() {
                     {inq.voivodeship && (<span className="flex items-center gap-1.5"><FileText className="w-4 h-4 text-slate-400" />woj. {inq.voivodeship}</span>)}
                   </div>
                   {inq.notes && (<p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3 mt-2">{inq.notes}</p>)}
+                  <div className="mt-3">
+                    <SendOfferButton inquiryId={inq.id} variant={inq.variant} email={inq.email} />
+                  </div>
                 </div>
                 <span className="flex items-center gap-1.5 text-xs text-slate-400 shrink-0">
                   <Clock className="w-3.5 h-3.5" />
