@@ -54,14 +54,6 @@ export default function SklepPage() {
     setQuantities(prev => ({ ...prev, [product.id]: 1 }));
   };
 
-  const updateQuantity = (id: string, delta: number) => {
-    setCart(prev => prev.map(i => {
-      if (i.id !== id) return i;
-      const newQty = i.quantity + delta;
-      return newQty > 0 ? { ...i, quantity: newQty } : i;
-    }));
-  };
-
   const removeFromCart = (id: string) => {
     setCart(prev => prev.filter(i => i.id !== id));
   };
