@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { generateOfferNumber, buildOfferEmailHtml, getVariantProducts } from "@/lib/offer";
+import { generateOfferNumber, buildOfferEmailHtml, getVariantProducts, buildOfferPdfHtml } from "@/lib/offer";
 
 export async function POST(req: Request) {
   try {
@@ -57,64 +57,20 @@ export async function POST(req: Request) {
           const offerNumber = generateOfferNumber();
           const offerLink = `https://ezdrp24.com.pl/api/offer/${inquiry.id}`;
 
-          const offerHtml = buildOfferEmailHtml({
+          const emailHtml = buildOfferEmailHtml({
             offerNumber,
             clientName: body.name || "",
             clientOrg: body.org || "",
-            clientEmail: body.email,
-            clientPhone: body.phone,
             variant: body.variant,
-            notes: body.notes,
+            offerLink,
           });
 
-          // Zapisz numer oferty w inquiry
-          await prisma.inquiry.update({
-            where: { id: inquiry.id },
-            data: { read: false },
-          });
-
-          if (offerHtml) {
-            // Email z ładnym tekstem + oferta w treści
-            const emailWrapper = `
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:600px;margin:0 auto;padding:24px;">
-    <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:12px 12px 0 0;padding:32px;text-align:center;">
-      <h1 style="margin:0;color:#fff;font-size:20px;font-weight:700;">EZD RP</h1>
-      <p style="margin:4px 0 0;color:#c4b5fd;font-size:13px;">ezdrp24.com.pl</p>
-    </div>
-    <div style="background:#fff;padding:32px;border:1px solid #e2e8f0;border-top:none;">
-      <p style="font-size:15px;color:#0f172a;margin:0 0 16px;">Dzień dobry${body.name ? `, ${body.name.split(" ")[0]}` : ""}!</p>
-      <p style="font-size:14px;color:#334155;line-height:1.7;margin:0 0 12px;">
-        Bardzo dziękujemy za zainteresowanie naszą ofertą sprzętu EZD RP. Cieszymy się, że możemy pomóc w wyposażeniu stanowiska pracy Państwa instytucji.
-      </p>
-      <p style="font-size:14px;color:#334155;line-height:1.7;margin:0 0 12px;">
-        Zgodnie z Państwa zapytaniem, przygotowaliśmy ofertę na <strong style="color:#7c3aed;">zestaw EZD RP ${body.variant}</strong>. Poniżej znajdą Państwo szczegółową specyfikację wraz z cenami.
-      </p>
-      <p style="font-size:14px;color:#334155;line-height:1.7;margin:0 0 24px;">
-        Oferta jest ważna 14 dni. W razie pytań lub potrzeby dostosowania konfiguracji — jesteśmy do dyspozycji.
-      </p>
-      <div style="text-align:center;margin-bottom:24px;">
-        <a href="${offerLink}" style="display:inline-block;background:#7c3aed;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;">Otwórz ofertę (PDF)</a>
-        <p style="margin:8px 0 0;font-size:12px;color:#94a3b8;">Kliknij aby otworzyć ofertę w przeglądarce i zapisać jako PDF</p>
-      </div>
-    </div>
-    <div style="background:#f8fafc;border-radius:0 0 12px 12px;padding:20px 32px;border:1px solid #e2e8f0;border-top:none;">
-      <p style="margin:0 0 4px;color:#334155;font-size:13px;font-weight:600;">Pozdrawiamy,</p>
-      <p style="margin:0 0 4px;color:#334155;font-size:13px;">Zespół Scanter Sp. z o.o.</p>
-      <p style="margin:8px 0 0;color:#94a3b8;font-size:11px;">
-        <a href="mailto:biuro@scanter.pl" style="color:#7c3aed;">biuro@scanter.pl</a> · <a href="tel:+48601828711" style="color:#7c3aed;">+48 601 828 711</a> · ul. Poświęcka 1a, 51-128 Wrocław
-      </p>
-    </div>
-  </div>
-</body></html>`;
-
+          if (emailHtml) {
             await resend.emails.send({
               from: "EZD RP Oferty <oferty@ezdrp24.com.pl>",
               to: body.email,
               subject: `Oferta ${offerNumber} — Zestaw EZD RP ${body.variant} — ezdrp24.com.pl`,
-              html: emailWrapper,
+              html: emailHtml,
             });
           }
         } catch (offerErr) {

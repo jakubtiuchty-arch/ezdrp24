@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { generateOfferNumber, buildOfferEmailHtml } from "@/lib/offer";
+import { generateOfferNumber, buildOfferPdfHtml } from "@/lib/offer";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const offerNumber = generateOfferNumber();
 
-  const html = buildOfferEmailHtml({
+  const html = buildOfferPdfHtml({
     offerNumber,
     clientName: inquiry.name || "",
     clientOrg: inquiry.org || "",
@@ -26,35 +26,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return new NextResponse("Nieznany wariant", { status: 400 });
   }
 
-  // Wrap w print-ready page
-  const printHtml = `
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-  <meta charset="UTF-8">
-  <title>Oferta ${offerNumber} — EZD RP</title>
-  <style>
-    @media print {
-      .no-print { display: none !important; }
-      body { padding: 0; margin: 0; background: white; }
-    }
-    @page { size: A4; margin: 10mm; }
-    body { margin: 0; padding: 0; background: #f8fafc; }
-  </style>
-</head>
-<body>
-  <div class="no-print" style="background:#7c3aed;color:white;padding:15px 20px;margin-bottom:20px;border-radius:8px;max-width:650px;margin:20px auto;display:flex;justify-content:space-between;align-items:center;">
-    <div><strong>Oferta ${offerNumber}</strong> — Kliknij aby zapisać jako PDF</div>
-    <button onclick="window.print()" style="background:white;color:#7c3aed;border:none;padding:10px 25px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px;">Zapisz PDF</button>
-  </div>
-  ${html}
-  <script>
-    // Auto-print on mobile (optional)
-  </script>
-</body>
-</html>`;
-
-  return new NextResponse(printHtml, {
+  return new NextResponse(html, {
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
 }

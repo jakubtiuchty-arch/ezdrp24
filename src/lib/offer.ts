@@ -1,4 +1,4 @@
-// Produkty i ceny
+// Produkty i ceny (w groszach)
 const PRODUCTS: Record<string, { name: string; description: string; price: number }> = {
   "DS2208": { name: "Zebra DS2208", description: "Czytnik kodów kreskowych 1D/2D, przewodowy USB, Plug & Play", price: 449_00 },
   "DS2278": { name: "Zebra DS2278", description: "Czytnik kodów kreskowych 1D/2D, bezprzewodowy Bluetooth, zasięg 10m", price: 999_00 },
@@ -25,9 +25,11 @@ function escapeHtml(str: string): string {
 
 export function generateOfferNumber(): string {
   const now = new Date();
-  const date = now.toISOString().slice(0, 10).replace(/-/g, "");
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
   const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `OFR-${date}-${rand}`;
+  return `OFR-${year}${month}${day}-${rand}`;
 }
 
 export function getVariantProducts(variant: string) {
@@ -36,7 +38,7 @@ export function getVariantProducts(variant: string) {
   return skus.map((sku) => ({ sku, ...PRODUCTS[sku] }));
 }
 
-export function buildOfferEmailHtml(opts: {
+export function buildOfferPdfHtml(opts: {
   offerNumber: string;
   clientName: string;
   clientOrg: string;
@@ -56,154 +58,261 @@ export function buildOfferEmailHtml(opts: {
   const validUntil = new Date(today);
   validUntil.setDate(validUntil.getDate() + 14);
 
-  const itemsRows = products
-    .map((p, i) => {
-      const brutto = Math.round(p.price * 1.23);
-      return `
-      <tr>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:center;">${i + 1}</td>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;">
-          <div style="font-weight:600;color:#1e1b4b;">${escapeHtml(p.name)}</div>
-          <div style="font-size:10px;color:#64748b;margin-top:4px;">${escapeHtml(p.description)}</div>
-        </td>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:center;">1 szt.</td>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;">${formatPrice(p.price)} zł</td>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:center;">23%</td>
-        <td style="padding:12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:bold;">${formatPrice(brutto)} zł</td>
-      </tr>`;
-    })
-    .join("");
+  const itemsRows = products.map((p, i) => {
+    const brutto = Math.round(p.price * 1.23);
+    return `
+    <tr>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;color:#64748b;">${i + 1}</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
+        <div style="font-weight:700;color:#0f172a;font-size:12px;">${escapeHtml(p.name)}</div>
+        <div style="font-size:10px;color:#64748b;margin-top:3px;">${escapeHtml(p.description)}</div>
+      </td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">1 szt.</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(p.price)} zł</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">23%</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(brutto)} zł</td>
+    </tr>`;
+  }).join("");
 
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="pl">
-<head><meta charset="UTF-8"><title>Oferta ${opts.offerNumber}</title></head>
-<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <div style="max-width:650px;margin:0 auto;padding:24px;">
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:12px 12px 0 0;padding:24px 32px;display:flex;justify-content:space-between;align-items:center;">
-      <div>
-        <div style="color:#ffffff;font-size:20px;font-weight:700;">Scanter</div>
-        <div style="color:#c4b5fd;font-size:11px;">ezdrp24.com.pl</div>
+<head>
+  <meta charset="UTF-8">
+  <title>Oferta ${opts.offerNumber}</title>
+  <style>
+    @media print { .no-print { display: none !important; } body { padding: 20px; margin: 0; } }
+    @page { size: A4; margin: 15mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; line-height: 1.4; color: #333; padding: 40px; max-width: 800px; margin: 0 auto; background: white; }
+  </style>
+</head>
+<body>
+  <!-- Print bar -->
+  <div class="no-print" style="background:#7c3aed;color:white;padding:15px 20px;margin-bottom:20px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+    <div><strong>Oferta ${escapeHtml(opts.offerNumber)}</strong> — Kliknij aby zapisać jako PDF</div>
+    <button onclick="window.print()" style="background:white;color:#7c3aed;border:none;padding:10px 25px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:14px;">Drukuj / Zapisz PDF</button>
+  </div>
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;padding-bottom:15px;border-bottom:3px solid #7c3aed;">
+    <div>
+      <div style="font-size:28px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">Scanter</div>
+      <div style="font-size:10px;color:#64748b;margin-top:2px;">Sprzęt EZD RP dla administracji publicznej</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:26px;font-weight:800;color:#1e1b4b;letter-spacing:2px;">OFERTA</div>
+      <div style="font-size:11px;color:#64748b;">Nr: ${escapeHtml(opts.offerNumber)}</div>
+    </div>
+  </div>
+
+  <!-- Parties -->
+  <div style="display:flex;justify-content:space-between;margin-bottom:25px;">
+    <div style="width:47%;">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e5e7eb;padding-bottom:5px;">Sprzedawca</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Scanter Sp. z o.o.</div>
+      <div style="font-size:11px;color:#444;margin-bottom:2px;">ul. Poświęcka 1a</div>
+      <div style="font-size:11px;color:#444;margin-bottom:2px;">51-128 Wrocław</div>
+      <div style="font-size:11px;color:#444;margin-bottom:2px;">NIP: 8952040169</div>
+      <div style="font-size:11px;color:#444;margin-bottom:2px;">Email: biuro@scanter.pl</div>
+      <div style="font-size:11px;color:#444;">Tel: +48 601 828 711</div>
+    </div>
+    <div style="width:47%;">
+      <div style="font-weight:700;color:#7c3aed;margin-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #e5e7eb;padding-bottom:5px;">Nabywca</div>
+      <div style="font-weight:700;font-size:13px;margin-bottom:4px;">${escapeHtml(opts.clientOrg || "—")}</div>
+      ${opts.clientName ? `<div style="font-size:11px;color:#444;margin-bottom:2px;">${escapeHtml(opts.clientName)}</div>` : ""}
+      <div style="font-size:11px;color:#444;margin-bottom:2px;">Email: ${escapeHtml(opts.clientEmail)}</div>
+      ${opts.clientPhone ? `<div style="font-size:11px;color:#444;">Tel: ${escapeHtml(opts.clientPhone)}</div>` : ""}
+    </div>
+  </div>
+
+  <!-- Dates -->
+  <div style="display:flex;justify-content:space-between;margin-bottom:25px;padding:12px 15px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;">
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Data wystawienia</div>
+      <div style="font-weight:700;font-size:13px;margin-top:3px;">${today.toLocaleDateString("pl-PL")}</div>
+    </div>
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ważna do</div>
+      <div style="font-weight:700;font-size:13px;margin-top:3px;">${validUntil.toLocaleDateString("pl-PL")}</div>
+    </div>
+    <div style="text-align:center;flex:1;">
+      <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Nr oferty</div>
+      <div style="font-weight:700;font-size:13px;margin-top:3px;">${escapeHtml(opts.offerNumber)}</div>
+    </div>
+  </div>
+
+  <!-- Variant label -->
+  <div style="margin-bottom:15px;font-size:12px;color:#334155;">
+    Zestaw: <strong style="color:#7c3aed;">EZD RP ${escapeHtml(opts.variant)}</strong>
+  </div>
+
+  <!-- Items table -->
+  <table style="width:100%;border-collapse:collapse;margin-bottom:25px;">
+    <thead>
+      <tr>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:35px;">Lp.</th>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa produktu</th>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:60px;">Ilość</th>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:100px;">Cena netto</th>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:50px;">VAT</th>
+        <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:100px;">Brutto</th>
+      </tr>
+    </thead>
+    <tbody>${itemsRows}</tbody>
+  </table>
+
+  <!-- Summary -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:25px;">
+    <div style="width:260px;background:#f8fafc;padding:15px;border-radius:6px;border:1px solid #e2e8f0;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;">
+        <span style="color:#64748b;">Wartość netto:</span>
+        <span>${formatPrice(subtotalNetto)} zł</span>
       </div>
-      <div style="text-align:right;">
-        <div style="color:#ffffff;font-size:22px;font-weight:700;letter-spacing:2px;">OFERTA</div>
-        <div style="color:#c4b5fd;font-size:11px;">Nr: ${opts.offerNumber}</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;">
+        <span style="color:#64748b;">VAT 23%:</span>
+        <span>${formatPrice(vatAmount)} zł</span>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:#7c3aed;border-top:2px solid #7c3aed;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;">
+        <span>Razem brutto:</span>
+        <span>${formatPrice(totalBrutto)} zł</span>
       </div>
     </div>
+  </div>
 
-    <!-- Content -->
-    <div style="background:#ffffff;padding:32px;border:1px solid #e2e8f0;border-top:none;">
+  <!-- Gratis -->
+  <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #86efac;font-size:11px;">
+    <strong style="color:#166534;">Gratis do zestawu:</strong> 2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe 110mm×74m (wartość ponad 100 zł netto)
+  </div>
 
-      <!-- Parties -->
-      <table style="width:100%;margin-bottom:24px;">
-        <tr>
-          <td style="width:50%;vertical-align:top;padding-right:16px;">
-            <div style="font-size:10px;color:#7c3aed;text-transform:uppercase;letter-spacing:1px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:5px;">Sprzedawca</div>
-            <div style="font-weight:bold;font-size:13px;margin-bottom:4px;">Scanter Sp. z o.o.</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">ul. Poświęcka 1a</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">51-128 Wrocław</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">NIP: 8952040169</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">Email: biuro@scanter.pl</div>
-            <div style="font-size:11px;color:#444;">Tel: +48 601 828 711</div>
-          </td>
-          <td style="width:50%;vertical-align:top;padding-left:16px;">
-            <div style="font-size:10px;color:#7c3aed;text-transform:uppercase;letter-spacing:1px;font-weight:bold;margin-bottom:8px;border-bottom:1px solid #e5e7eb;padding-bottom:5px;">Nabywca</div>
-            <div style="font-weight:bold;font-size:13px;margin-bottom:4px;">${escapeHtml(opts.clientOrg)}</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">${escapeHtml(opts.clientName)}</div>
-            <div style="font-size:11px;color:#444;margin-bottom:2px;">Email: ${escapeHtml(opts.clientEmail)}</div>
-            ${opts.clientPhone ? `<div style="font-size:11px;color:#444;">Tel: ${escapeHtml(opts.clientPhone)}</div>` : ""}
-          </td>
-        </tr>
-      </table>
-
-      <!-- Dates -->
-      <table style="width:100%;margin-bottom:24px;background:#f8fafc;border-radius:6px;border:1px solid #e2e8f0;">
-        <tr>
-          <td style="padding:12px;text-align:center;">
-            <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Data wystawienia</div>
-            <div style="font-weight:bold;font-size:13px;margin-top:3px;">${today.toLocaleDateString("pl-PL")}</div>
-          </td>
-          <td style="padding:12px;text-align:center;">
-            <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Ważna do</div>
-            <div style="font-weight:bold;font-size:13px;margin-top:3px;">${validUntil.toLocaleDateString("pl-PL")}</div>
-          </td>
-          <td style="padding:12px;text-align:center;">
-            <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Nr oferty</div>
-            <div style="font-weight:bold;font-size:13px;margin-top:3px;">${opts.offerNumber}</div>
-          </td>
-        </tr>
-      </table>
-
-      <!-- Wariant -->
-      <div style="margin-bottom:16px;font-size:13px;color:#334155;">
-        Zestaw: <strong style="color:#7c3aed;">EZD RP ${escapeHtml(opts.variant)}</strong>
-      </div>
-
-      <!-- Items -->
-      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-        <thead>
-          <tr>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:35px;">Lp.</th>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;">Nazwa produktu</th>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:60px;">Ilość</th>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:95px;">Cena netto</th>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:50px;">VAT</th>
-            <th style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;padding:10px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;width:95px;">Brutto</th>
-          </tr>
-        </thead>
-        <tbody>${itemsRows}</tbody>
-      </table>
-
-      <!-- Summary -->
-      <table style="width:100%;margin-bottom:24px;">
-        <tr><td></td>
-          <td style="width:260px;">
-            <div style="background:#f8fafc;padding:15px;border-radius:6px;border:1px solid #e2e8f0;">
-              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;">
-                <span style="color:#64748b;">Wartość netto:</span>
-                <span>${formatPrice(subtotalNetto)} zł</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:11px;">
-                <span style="color:#64748b;">VAT 23%:</span>
-                <span>${formatPrice(vatAmount)} zł</span>
-              </div>
-              <div style="font-size:16px;font-weight:bold;color:#7c3aed;border-top:2px solid #7c3aed;padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;">
-                <span>Razem brutto:</span>
-                <span>${formatPrice(totalBrutto)} zł</span>
-              </div>
-            </div>
-          </td>
-        </tr>
-      </table>
-
-      <!-- Gratis -->
-      <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #86efac;font-size:11px;">
-        <strong style="color:#166534;">Gratis do zestawu:</strong> 2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe 110mm×74m (wartość ponad 100 zł netto)
-      </div>
-
-      <!-- Conditions -->
-      <div style="background:#f8fafc;padding:15px;border-radius:6px;margin-bottom:24px;border:1px solid #e2e8f0;">
-        <div style="font-weight:bold;color:#1e1b4b;margin-bottom:10px;font-size:12px;">Warunki oferty</div>
-        <table style="width:100%;font-size:11px;">
-          <tr><td style="width:140px;color:#64748b;padding:3px 0;">Ważność oferty:</td><td style="font-weight:600;">do ${validUntil.toLocaleDateString("pl-PL")}</td></tr>
-          <tr><td style="color:#64748b;padding:3px 0;">Warunki płatności:</td><td style="font-weight:600;">Przelew 14 dni</td></tr>
-          <tr><td style="color:#64748b;padding:3px 0;">Termin dostawy:</td><td style="font-weight:600;">2-5 dni roboczych</td></tr>
-        </table>
-      </div>
-
-      ${opts.notes ? `
-      <div style="background:#fffbeb;padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #fde68a;font-size:11px;">
-        <strong style="color:#92400e;">Uwagi klienta:</strong> ${escapeHtml(opts.notes)}
-      </div>` : ""}
+  <!-- Conditions -->
+  <div style="background:#f8fafc;padding:15px;border-radius:6px;margin-bottom:25px;border:1px solid #e2e8f0;">
+    <div style="font-weight:700;color:#1e1b4b;margin-bottom:10px;font-size:12px;">Warunki oferty</div>
+    <div style="display:flex;margin-bottom:6px;">
+      <span style="width:140px;color:#64748b;font-size:11px;">Ważność oferty:</span>
+      <span style="font-weight:600;font-size:11px;">do ${validUntil.toLocaleDateString("pl-PL")}</span>
     </div>
-
-    <!-- Footer -->
-    <div style="background:#f8fafc;border-radius:0 0 12px 12px;padding:16px 32px;border:1px solid #e2e8f0;border-top:none;text-align:center;">
-      <p style="margin:0;color:#94a3b8;font-size:10px;">Dokument wygenerowany automatycznie przez system ezdrp24.com.pl</p>
-      <p style="margin:4px 0 0;color:#94a3b8;font-size:10px;">Scanter Sp. z o.o. | ul. Poświęcka 1a, 51-128 Wrocław | <a href="mailto:biuro@scanter.pl" style="color:#7c3aed;">biuro@scanter.pl</a> | +48 601 828 711</p>
+    <div style="display:flex;margin-bottom:6px;">
+      <span style="width:140px;color:#64748b;font-size:11px;">Warunki płatności:</span>
+      <span style="font-weight:600;font-size:11px;">Przelew 14 dni</span>
     </div>
+    <div style="display:flex;">
+      <span style="width:140px;color:#64748b;font-size:11px;">Termin dostawy:</span>
+      <span style="font-weight:600;font-size:11px;">2-5 dni roboczych</span>
+    </div>
+  </div>
+
+  ${opts.notes ? `
+  <div style="background:#fffbeb;padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #fde68a;font-size:11px;">
+    <strong style="color:#92400e;">Uwagi klienta:</strong> ${escapeHtml(opts.notes)}
+  </div>` : ""}
+
+  <!-- Footer -->
+  <div style="text-align:center;color:#64748b;font-size:9px;padding-top:15px;border-top:1px solid #e5e7eb;">
+    <p style="margin-bottom:3px;">Dokument wygenerowany automatycznie przez system ezdrp24.com.pl</p>
+    <p>Scanter Sp. z o.o. | ul. Poświęcka 1a, 51-128 Wrocław | <a href="mailto:biuro@scanter.pl" style="color:#7c3aed;">biuro@scanter.pl</a> | +48 601 828 711</p>
   </div>
 </body>
 </html>`;
+}
+
+export function buildOfferEmailHtml(opts: {
+  offerNumber: string;
+  clientName: string;
+  clientOrg: string;
+  variant: string;
+  offerLink: string;
+}) {
+  const products = getVariantProducts(opts.variant);
+  if (!products) return null;
+
+  const subtotalNetto = products.reduce((s, p) => s + p.price, 0);
+  const totalBrutto = subtotalNetto + Math.round(subtotalNetto * 0.23);
+  const firstName = opts.clientName ? opts.clientName.split(" ")[0] : "";
+
+  const itemsList = products.map(p =>
+    `<tr>
+      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155;">${escapeHtml(p.name)}</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(p.price)} zł</td>
+    </tr>`
+  ).join("");
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:24px;">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:16px 16px 0 0;padding:40px 32px;text-align:center;">
+      <div style="color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Scanter</div>
+      <div style="color:#c4b5fd;font-size:12px;margin-top:4px;">Sprzęt EZD RP dla administracji publicznej</div>
+    </div>
+
+    <!-- Content -->
+    <div style="background:#ffffff;padding:36px 32px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">
+
+      <p style="font-size:16px;color:#0f172a;margin:0 0 20px;font-weight:600;">
+        Dzień dobry${firstName ? `, ${firstName}` : ""}!
+      </p>
+
+      <p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 16px;">
+        Bardzo dziękujemy za zainteresowanie naszą ofertą. Cieszymy się, że możemy pomóc w wyposażeniu Państwa stanowiska pracy w sprzęt do systemu EZD RP.
+      </p>
+
+      <p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 24px;">
+        Przygotowaliśmy dla Państwa ofertę na <strong style="color:#7c3aed;">zestaw EZD RP ${escapeHtml(opts.variant)}</strong>. Poniżej skrócone zestawienie — pełna oferta z cenami, warunkami i szczegółami dostępna jest pod przyciskiem.
+      </p>
+
+      <!-- Products summary -->
+      <div style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;margin-bottom:24px;">
+        <div style="background:#7c3aed;padding:12px 16px;">
+          <span style="color:white;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Zestaw EZD RP ${escapeHtml(opts.variant)}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          ${itemsList}
+          <tr style="background:#f1f5f9;">
+            <td style="padding:12px 16px;font-size:14px;font-weight:700;color:#0f172a;">Razem brutto (z VAT 23%):</td>
+            <td style="padding:12px 16px;text-align:right;font-size:16px;font-weight:800;color:#7c3aed;">${formatPrice(totalBrutto)} zł</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- CTA -->
+      <div style="text-align:center;margin:32px 0;">
+        <a href="${opts.offerLink}" style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#ffffff;padding:16px 40px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;letter-spacing:0.3px;">Pobierz ofertę PDF</a>
+        <p style="margin:10px 0 0;font-size:12px;color:#94a3b8;">Oferta otworzy się w przeglądarce — zapisz jako PDF przez Drukuj (Ctrl+P)</p>
+      </div>
+
+      <!-- Info box -->
+      <div style="background:#f0fdf4;border-radius:10px;padding:20px;border:1px solid #bbf7d0;margin-bottom:24px;">
+        <p style="margin:0 0 8px;color:#166534;font-size:13px;font-weight:700;">Do każdego zestawu dołączamy gratis:</p>
+        <p style="margin:0;color:#166534;font-size:13px;">2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe — wartość ponad 100 zł netto</p>
+      </div>
+
+      <div style="background:#f8fafc;border-radius:10px;padding:20px;border:1px solid #e2e8f0;">
+        <p style="margin:0 0 6px;font-size:13px;color:#475569;">Oferta jest ważna <strong>14 dni</strong>. Warunki płatności: przelew 14 dni. Dostawa: 2-5 dni roboczych.</p>
+        <p style="margin:0;font-size:13px;color:#475569;">W razie pytań lub potrzeby modyfikacji — proszę odpisać na tego maila lub zadzwonić.</p>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div style="background:#f8fafc;padding:28px 32px;border:1px solid #e2e8f0;border-top:none;">
+      <p style="margin:0 0 4px;color:#0f172a;font-size:14px;font-weight:600;">Pozdrawiamy,</p>
+      <p style="margin:0 0 12px;color:#475569;font-size:13px;">Zespół Scanter Sp. z o.o.</p>
+      <div style="border-top:1px solid #e2e8f0;padding-top:12px;">
+        <p style="margin:0;font-size:12px;color:#64748b;">
+          <a href="mailto:biuro@scanter.pl" style="color:#7c3aed;text-decoration:none;font-weight:600;">biuro@scanter.pl</a>
+          &nbsp;·&nbsp;
+          <a href="tel:+48601828711" style="color:#7c3aed;text-decoration:none;font-weight:600;">+48 601 828 711</a>
+        </p>
+        <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;">ul. Poświęcka 1a, 51-128 Wrocław · ezdrp24.com.pl</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="border-radius:0 0 16px 16px;padding:16px 32px;text-align:center;border:1px solid #e2e8f0;border-top:none;background:#ffffff;">
+      <p style="margin:0;color:#cbd5e1;font-size:10px;">Nr oferty: ${escapeHtml(opts.offerNumber)}</p>
+    </div>
+
+  </div>
+</body></html>`;
 }
