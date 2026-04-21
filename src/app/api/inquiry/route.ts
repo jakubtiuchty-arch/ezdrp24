@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { generateOfferNumber, buildOfferEmailHtml, getVariantProducts } from "@/lib/offer";
 
 export async function POST(req: Request) {
   try {
@@ -48,6 +49,33 @@ export async function POST(req: Request) {
         });
       } catch (emailErr) {
         console.error("Email send error:", emailErr);
+      }
+
+      // Auto-wysyłka oferty do klienta jeśli wybrał wariant
+      if (body.variant && getVariantProducts(body.variant) && body.email) {
+        try {
+          const offerNumber = generateOfferNumber();
+          const offerHtml = buildOfferEmailHtml({
+            offerNumber,
+            clientName: body.name || "",
+            clientOrg: body.org || "",
+            clientEmail: body.email,
+            clientPhone: body.phone,
+            variant: body.variant,
+            notes: body.notes,
+          });
+
+          if (offerHtml) {
+            await resend.emails.send({
+              from: "EZD RP Oferty <oferty@ezdrp24.com.pl>",
+              to: body.email,
+              subject: `Oferta ${offerNumber} — Zestaw EZD RP ${body.variant} — ezdrp24.com.pl`,
+              html: offerHtml,
+            });
+          }
+        } catch (offerErr) {
+          console.error("Offer email error:", offerErr);
+        }
       }
     }
 
