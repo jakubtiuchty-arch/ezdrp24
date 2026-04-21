@@ -88,6 +88,14 @@ export function ContactForm() {
                       <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                     </div>
                     <span className="text-slate-700 text-sm">
+                      <strong className="text-slate-900">Oferta z wyceną</strong> zostanie przesłana na Twojego maila w formacie PDF
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <div className="w-4 h-4 bg-violet-600 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                      <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-slate-700 text-sm">
                       Skontaktujemy się <strong className="text-slate-900">w ciągu 24 godzin</strong>
                     </span>
                   </li>
@@ -96,15 +104,7 @@ export function ContactForm() {
                       <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                     </div>
                     <span className="text-slate-700 text-sm">
-                      Przygotujemy <strong className="text-slate-900">indywidualną wycenę</strong>
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-4 h-4 bg-violet-600 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-slate-700 text-sm">
-                      Pomożemy dobrać <strong className="text-slate-900">optymalny zestaw</strong>
+                      Pomożemy dobrać <strong className="text-slate-900">optymalny zestaw</strong> do potrzeb instytucji
                     </span>
                   </li>
                 </ul>
