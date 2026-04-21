@@ -96,7 +96,7 @@ export function buildOfferPdfHtml(opts: {
   <!-- Header -->
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;padding-bottom:15px;border-bottom:3px solid #7c3aed;">
     <div>
-      <img src="https://www.ezdrp24.com.pl/scanter_logo_200.png" alt="Scanter" style="height:55px;width:auto;" />
+      <img src="https://www.ezdrp24.com.pl/scanter_logo_email.png" alt="Scanter" style="height:45px;width:auto;" />
     </div>
     <div style="text-align:right;">
       <div style="font-size:26px;font-weight:800;color:#1e1b4b;letter-spacing:2px;">OFERTA</div>
@@ -242,7 +242,7 @@ export function buildOfferEmailHtml(opts: {
 
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:16px 16px 0 0;padding:40px 32px;text-align:center;">
-      <img src="https://www.ezdrp24.com.pl/scanter_logo_200.png" alt="Scanter" style="height:50px;width:auto;margin-bottom:8px;" />
+      <img src="https://www.ezdrp24.com.pl/scanter_logo_email.png" alt="Scanter" style="height:40px;width:auto;margin-bottom:8px;" />
       <div style="color:#c4b5fd;font-size:12px;">Sprzęt EZD RP dla administracji publicznej</div>
     </div>
 
