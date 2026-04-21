@@ -96,8 +96,7 @@ export function buildOfferPdfHtml(opts: {
   <!-- Header -->
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:30px;padding-bottom:15px;border-bottom:3px solid #7c3aed;">
     <div>
-      <div style="font-size:28px;font-weight:800;color:#0f172a;letter-spacing:-0.5px;">Scanter</div>
-      <div style="font-size:10px;color:#64748b;margin-top:2px;">Sprzęt EZD RP dla administracji publicznej</div>
+      <img src="https://ezdrp24.com.pl/scanter_logo.png" alt="Scanter" style="height:55px;width:auto;" />
     </div>
     <div style="text-align:right;">
       <div style="font-size:26px;font-weight:800;color:#1e1b4b;letter-spacing:2px;">OFERTA</div>
@@ -243,8 +242,8 @@ export function buildOfferEmailHtml(opts: {
 
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:16px 16px 0 0;padding:40px 32px;text-align:center;">
-      <div style="color:#ffffff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">Scanter</div>
-      <div style="color:#c4b5fd;font-size:12px;margin-top:4px;">Sprzęt EZD RP dla administracji publicznej</div>
+      <img src="https://ezdrp24.com.pl/scanter_logo.png" alt="Scanter" style="height:50px;width:auto;margin-bottom:8px;" />
+      <div style="color:#c4b5fd;font-size:12px;">Sprzęt EZD RP dla administracji publicznej</div>
     </div>
 
     <!-- Content -->
