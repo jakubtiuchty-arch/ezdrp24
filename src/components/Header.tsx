@@ -58,6 +58,12 @@ export function Header() {
             >
               Poproś o wycenę
             </Link>
+            <Link
+              href="/panel/login"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-700 hover:bg-slate-50 text-sm font-medium transition-colors"
+            >
+              Panel klienta
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -95,6 +101,13 @@ export function Header() {
             onClick={() => setIsMenuOpen(false)}
           >
             Poproś o wycenę
+          </Link>
+          <Link
+            href="/panel/login"
+            className="inline-flex justify-center px-4 py-2 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Panel klienta
           </Link>
         </div>
       </div>
