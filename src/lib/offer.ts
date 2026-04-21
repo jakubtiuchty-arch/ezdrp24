@@ -241,7 +241,7 @@ export function buildOfferEmailHtml(opts: {
 
     <!-- Logo -->
     <div style="background:#ffffff;border-radius:16px 16px 0 0;padding:24px 32px;text-align:center;border:1px solid #e2e8f0;border-bottom:none;">
-      <img src="https://www.ezdrp24.com.pl/scanter_logo_email.png" alt="Scanter" style="height:45px;width:auto;" />
+      <img src="https://www.ezdrp24.com.pl/scanter_logo_email.png" alt="Scanter" style="height:54px;width:auto;" />
     </div>
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#7c3aed,#6d28d9);padding:20px 32px;text-align:center;">
