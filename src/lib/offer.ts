@@ -261,7 +261,7 @@ export function buildOfferEmailHtml(opts: {
 
   const subtotalNetto = products.reduce((s, p) => s + p.price, 0);
   const totalBrutto = subtotalNetto + Math.round(subtotalNetto * 0.23);
-  const firstName = opts.clientName ? opts.clientName.split(" ")[0] : "";
+  const firstName = "";
 
   const itemsList = products.map(p =>
     `<tr>
@@ -288,7 +288,7 @@ export function buildOfferEmailHtml(opts: {
     <div style="background:#ffffff;padding:36px 32px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;">
 
       <p style="font-size:16px;color:#0f172a;margin:0 0 20px;font-weight:600;">
-        Dzień dobry${firstName ? `, ${firstName}` : ""}!
+        Dzień dobry!
       </p>
 
       <p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 16px;">
