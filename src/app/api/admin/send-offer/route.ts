@@ -49,10 +49,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Oznacz jako przeczytane
+  // Zapisz email ID i oznacz jako wysłane
   await prisma.inquiry.update({
     where: { id: inquiryId },
-    data: { read: true },
+    data: {
+      read: true,
+      offerEmailId: data?.id || null,
+      offerSentAt: new Date(),
+    },
   });
 
   return NextResponse.json({ success: true, emailId: data?.id, offerNumber });

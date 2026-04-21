@@ -1,11 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Loader2, Check } from "lucide-react";
+import { Send, Loader2, Check, MailCheck } from "lucide-react";
 
-export function SendOfferButton({ inquiryId, variant, email }: { inquiryId: string; variant: string | null; email: string }) {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [message, setMessage] = useState("");
+export function SendOfferButton({
+  inquiryId, variant, email, sentAt, deliveredAt
+}: {
+  inquiryId: string;
+  variant: string | null;
+  email: string;
+  sentAt?: string | null;
+  deliveredAt?: string | null;
+}) {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    sentAt ? "sent" : "idle"
+  );
+  const [message, setMessage] = useState(
+    sentAt ? `Wysłano → ${email}` : ""
+  );
+  const [delivered, setDelivered] = useState(!!deliveredAt);
 
   if (!variant) return null;
 
@@ -28,7 +41,7 @@ export function SendOfferButton({ inquiryId, variant, email }: { inquiryId: stri
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 flex-wrap">
       {status === "idle" && (
         <button
           onClick={send}
@@ -60,6 +73,24 @@ export function SendOfferButton({ inquiryId, variant, email }: { inquiryId: stri
             Ponów
           </button>
         </div>
+      )}
+
+      {/* Delivered badge */}
+      {delivered && (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 text-xs font-medium">
+          <MailCheck className="w-3.5 h-3.5" />
+          Dostarczono ofertę
+        </span>
+      )}
+
+      {/* Resend button if already sent */}
+      {status === "sent" && !delivered && (
+        <button
+          onClick={() => { setStatus("idle"); setMessage(""); setDelivered(false); }}
+          className="text-xs text-violet-600 hover:underline cursor-pointer"
+        >
+          Wyślij ponownie
+        </button>
       )}
     </div>
   );

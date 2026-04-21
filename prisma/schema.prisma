@@ -125,17 +125,20 @@ model ServiceRequest {
 }
 
 model Inquiry {
-  id          String   @id @default(cuid())
-  name        String?
-  org         String?
-  email       String
-  phone       String?
-  voivodeship String?
-  variant     String?
-  notes       String?
-  rfq         Boolean  @default(false)
-  read        Boolean  @default(false)
-  createdAt   DateTime @default(now()) @map("created_at")
+  id               String    @id @default(cuid())
+  name             String?
+  org              String?
+  email            String
+  phone            String?
+  voivodeship      String?
+  variant          String?
+  notes            String?
+  rfq              Boolean   @default(false)
+  read             Boolean   @default(false)
+  offerEmailId     String?   @map("offer_email_id")
+  offerSentAt      DateTime? @map("offer_sent_at")
+  offerDeliveredAt DateTime? @map("offer_delivered_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
 
   @@map("inquiries")
 }

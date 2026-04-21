@@ -62,7 +62,13 @@ export default async function AdminPage() {
                   </div>
                   {inq.notes && (<p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3 mt-2">{inq.notes}</p>)}
                   <div className="mt-3">
-                    <SendOfferButton inquiryId={inq.id} variant={inq.variant} email={inq.email} />
+                    <SendOfferButton
+                      inquiryId={inq.id}
+                      variant={inq.variant}
+                      email={inq.email}
+                      sentAt={inq.offerSentAt?.toISOString()}
+                      deliveredAt={inq.offerDeliveredAt?.toISOString()}
+                    />
                   </div>
                 </div>
                 <span className="flex items-center gap-1.5 text-xs text-slate-400 shrink-0">
