@@ -230,7 +230,7 @@ export function buildOfferEmailHtml(opts: {
   const itemsList = products.map(p =>
     `<tr>
       <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155;">${escapeHtml(p.name)}</td>
-      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(p.price)} zł</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(p.price)} zł <span style="font-weight:400;color:#94a3b8;font-size:11px;">netto</span></td>
     </tr>`
   ).join("");
 
@@ -270,6 +270,10 @@ export function buildOfferEmailHtml(opts: {
         </div>
         <table style="width:100%;border-collapse:collapse;">
           ${itemsList}
+          <tr>
+            <td style="padding:10px 16px;font-size:13px;color:#64748b;">Razem netto:</td>
+            <td style="padding:10px 16px;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(subtotalNetto)} zł</td>
+          </tr>
           <tr style="background:#f1f5f9;">
             <td style="padding:12px 16px;font-size:14px;font-weight:700;color:#0f172a;">Razem brutto (z VAT 23%):</td>
             <td style="padding:12px 16px;text-align:right;font-size:16px;font-weight:800;color:#7c3aed;">${formatPrice(totalBrutto)} zł</td>
