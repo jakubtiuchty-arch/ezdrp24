@@ -23,6 +23,29 @@ function escapeHtml(str: string): string {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+const EDU_KEYWORDS = [
+  "szkoła", "szkoły", "szkół", "szkolne", "szkolny",
+  "przedszkole", "przedszkola",
+  "żłobek", "żłobka",
+  "liceum",
+  "gimnazjum",
+  "technikum",
+  "zespół szkół", "zespołu szkół",
+  "placówka oświatowa", "placówki oświatowej",
+  "centrum kształcenia",
+  "bursa",
+  "poradnia",
+  "ośrodek szkolno",
+  "internat",
+  "młodzieżowy dom kultury",
+  "specjalny ośrodek",
+];
+
+export function isEducationalInstitution(orgName: string): boolean {
+  const lower = orgName.toLowerCase();
+  return EDU_KEYWORDS.some(kw => lower.includes(kw));
+}
+
 export function generateOfferNumber(): string {
   const now = new Date();
   const year = now.getFullYear();
@@ -46,6 +69,7 @@ export function buildOfferPdfHtml(opts: {
   clientPhone?: string;
   variant: string;
   notes?: string;
+  isEdu?: boolean;
 }) {
   const products = getVariantProducts(opts.variant);
   if (!products) return null;
@@ -182,6 +206,17 @@ export function buildOfferPdfHtml(opts: {
     <strong style="color:#166534;">Gratis do zestawu:</strong> 2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe 110mm×74m (wartość ponad 100 zł netto)
   </div>
 
+  ${opts.isEdu ? `
+  <!-- VAT 0% info for educational institutions -->
+  <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);padding:14px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #93c5fd;font-size:11px;">
+    <strong style="color:#1e40af;">Informacja o stawce VAT 0%</strong>
+    <p style="margin:6px 0 0;color:#1e3a5f;line-height:1.6;">
+      Jako placówka oświatowa, Państwa jednostka może skorzystać ze <strong>stawki VAT 0%</strong> na wybrane produkty z niniejszej oferty.
+      Warunkiem jest uzyskanie stosownego zaświadczenia od organu prowadzącego (np. Urząd Miasta, Gminy).
+      Chętnie pomożemy w przygotowaniu wniosku — prosimy o kontakt.
+    </p>
+  </div>` : ""}
+
   <!-- Conditions -->
   <div style="background:#f8fafc;padding:15px;border-radius:6px;margin-bottom:25px;border:1px solid #e2e8f0;">
     <div style="font-weight:700;color:#1e1b4b;margin-bottom:10px;font-size:12px;">Warunki oferty</div>
@@ -219,6 +254,7 @@ export function buildOfferEmailHtml(opts: {
   clientOrg: string;
   variant: string;
   offerLink: string;
+  isEdu?: boolean;
 }) {
   const products = getVariantProducts(opts.variant);
   if (!products) return null;
@@ -292,6 +328,15 @@ export function buildOfferEmailHtml(opts: {
         <p style="margin:0 0 8px;color:#166534;font-size:13px;font-weight:700;">Do każdego zestawu dołączamy gratis:</p>
         <p style="margin:0;color:#166534;font-size:13px;">2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe — wartość ponad 100 zł netto</p>
       </div>
+
+      ${opts.isEdu ? `
+      <div style="background:#eff6ff;border-radius:10px;padding:20px;border:1px solid #93c5fd;margin-bottom:24px;">
+        <p style="margin:0 0 8px;color:#1e40af;font-size:13px;font-weight:700;">Informacja o stawce VAT 0%</p>
+        <p style="margin:0;color:#1e3a5f;font-size:13px;line-height:1.6;">
+          Jako placówka oświatowa, Państwa jednostka może skorzystać ze <strong>stawki VAT 0%</strong> na wybrane produkty.
+          Wymagane jest zaświadczenie od organu prowadzącego (np. Urząd Miasta, Gminy). Chętnie pomożemy w przygotowaniu wniosku.
+        </p>
+      </div>` : ""}
 
       <div style="background:#f8fafc;border-radius:10px;padding:20px;border:1px solid #e2e8f0;">
         <p style="margin:0 0 6px;font-size:13px;color:#475569;">Oferta jest ważna <strong>14 dni</strong>. Warunki płatności: przelew 14 dni. Dostawa: 2-5 dni roboczych.</p>

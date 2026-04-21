@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { generateOfferNumber, buildOfferEmailHtml, getVariantProducts, buildOfferPdfHtml } from "@/lib/offer";
+import { generateOfferNumber, buildOfferEmailHtml, getVariantProducts, isEducationalInstitution } from "@/lib/offer";
 
 export async function POST(req: Request) {
   try {
@@ -57,12 +57,15 @@ export async function POST(req: Request) {
           const offerNumber = generateOfferNumber();
           const offerLink = `https://ezdrp24.com.pl/api/offer/${inquiry.id}`;
 
+          const isEdu = body.org ? isEducationalInstitution(body.org) : false;
+
           const emailHtml = buildOfferEmailHtml({
             offerNumber,
             clientName: body.name || "",
             clientOrg: body.org || "",
             variant: body.variant,
             offerLink,
+            isEdu,
           });
 
           if (emailHtml) {

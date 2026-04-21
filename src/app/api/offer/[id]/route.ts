@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { generateOfferNumber, buildOfferPdfHtml } from "@/lib/offer";
+import { generateOfferNumber, buildOfferPdfHtml, isEducationalInstitution } from "@/lib/offer";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,6 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     clientPhone: inquiry.phone || undefined,
     variant: inquiry.variant,
     notes: inquiry.notes || undefined,
+    isEdu: inquiry.org ? isEducationalInstitution(inquiry.org) : false,
   });
 
   if (!html) {
