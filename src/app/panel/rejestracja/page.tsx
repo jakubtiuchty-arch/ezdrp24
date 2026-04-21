@@ -9,7 +9,9 @@ export default function RegisterPage() {
   const [form, setForm] = useState({
     firstName: "", lastName: "", organizationName: "", nip: "",
     street: "", postalCode: "", city: "", phone: "", email: "", password: "",
+    deliveryStreet: "", deliveryPostalCode: "", deliveryCity: "",
   });
+  const [differentAddress, setDifferentAddress] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -29,6 +31,13 @@ export default function RegisterPage() {
     const data = await res.json();
 
     if (data.success) {
+      if (differentAddress && (form.deliveryStreet || form.deliveryCity)) {
+        localStorage.setItem("ezdrp_delivery", JSON.stringify({
+          street: form.deliveryStreet,
+          postalCode: form.deliveryPostalCode,
+          city: form.deliveryCity,
+        }));
+      }
       router.push("/panel/sklep");
     } else {
       setError(data.error);
@@ -98,6 +107,44 @@ export default function RegisterPage() {
                 <input value={form.city} onChange={e => update("city", e.target.value)}
                   className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Wrocław" />
               </div>
+            </div>
+
+            {/* Wysyłka na inny adres */}
+            <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={differentAddress}
+                  onChange={(e) => setDifferentAddress(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                />
+                <div>
+                  <span className="text-sm font-medium text-slate-900">Wysyłka na inny adres</span>
+                  <p className="text-xs text-slate-500">Jeśli adres dostawy jest inny niż dane do faktury</p>
+                </div>
+              </label>
+
+              {differentAddress && (
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Adres wysyłki (ulica)</label>
+                    <input value={form.deliveryStreet} onChange={e => update("deliveryStreet", e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="ul. Dostawcza 10" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Kod pocztowy</label>
+                      <input value={form.deliveryPostalCode} onChange={e => update("deliveryPostalCode", e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="00-000" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">Miasto</label>
+                      <input value={form.deliveryCity} onChange={e => update("deliveryCity", e.target.value)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Wrocław" />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <hr className="border-slate-200" />

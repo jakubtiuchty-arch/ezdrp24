@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Użytkownik nie znaleziony" }, { status: 404 });
   }
 
-  const { items, notes } = await req.json();
+  const { items, notes, delivery } = await req.json();
 
   if (!items || items.length === 0) {
     return NextResponse.json({ error: "Koszyk jest pusty" }, { status: 400 });
@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
       orderNumber,
       status: "PENDING",
       notes: notes || null,
-      deliveryStreet: user.street,
-      deliveryPostalCode: user.postalCode,
-      deliveryCity: user.city,
+      deliveryStreet: delivery?.street || user.street,
+      deliveryPostalCode: delivery?.postalCode || user.postalCode,
+      deliveryCity: delivery?.city || user.city,
       userId: user.id,
       items: {
         create: items.map((item: { id: string; name: string; quantity: number; price: number }) => ({

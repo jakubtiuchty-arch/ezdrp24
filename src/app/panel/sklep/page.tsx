@@ -68,7 +68,11 @@ export default function SklepPage() {
       const res = await fetch("/api/panel/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: cart, notes }),
+        body: JSON.stringify({
+          items: cart,
+          notes,
+          delivery: JSON.parse(localStorage.getItem("ezdrp_delivery") || "null"),
+        }),
       });
       const data = await res.json();
 
