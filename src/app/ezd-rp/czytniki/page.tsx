@@ -69,12 +69,25 @@ export default function CzytnikiPage() {
     }
   ];
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Czy czytnik do EZD musi obsługiwać kody 2D?", "acceptedAnswer": { "@type": "Answer", "text": "Tak. System EZD RP generuje etykiety z kodami 2D (Data Matrix, PDF417) oraz QR. Czytniki obsługujące tylko kody 1D (kreskowe) nie są wystarczające. Oba modele Zebra DS2208 i DS2278 odczytują natywnie wszystkie formaty kodów wymagane przez EZD RP." }},
+      { "@type": "Question", "name": "Czy czytnik Zebra DS2208/DS2278 wymaga instalacji sterowników?", "acceptedAnswer": { "@type": "Answer", "text": "Nie. Oba czytniki działają w trybie Plug & Play — po podłączeniu do portu USB system Windows rozpoznaje je automatycznie jako urządzenie HID (jak klawiatura). Odczytany kod jest wpisywany w aktywne pole tekstowe." }},
+      { "@type": "Question", "name": "Jak działa tryb offline w DS2278?", "acceptedAnswer": { "@type": "Answer", "text": "Czytnik DS2278 posiada pamięć wewnętrzną na ok. 2500 kodów. Gdy oddalisz się poza zasięg Bluetooth (10m), czytnik przechodzi w tryb batch — skanowane kody zapisują się w pamięci. Po powrocie w zasięg, dane synchronizują się automatycznie z komputerem." }},
+      { "@type": "Question", "name": "Ile wytrzymuje bateria w DS2278?", "acceptedAnswer": { "@type": "Answer", "text": "Bateria zapewnia do 14 godzin ciągłej pracy (ok. 33 000 skanów na jednym ładowaniu). Ładowanie odbywa się przez stację dokującą USB — pełne naładowanie trwa ok. 4 godziny. Stacja dokująca jest dołączona w zestawie." }},
+      { "@type": "Question", "name": "Czy mogę używać czytnika z dowolnym oprogramowaniem EZD?", "acceptedAnswer": { "@type": "Answer", "text": "Tak. Czytniki Zebra DS2208 i DS2278 emulują klawiaturę (HID) — odczytany kod jest wpisywany jako tekst w dowolne aktywne pole. Działają z każdym oprogramowaniem EZD, w tym EZD RP od NASK, EZD PUW, eDok i innymi systemami." }}
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {productLd.map((ld, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       ))}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <Header />
 
       <main className="flex-grow">
@@ -256,12 +269,12 @@ export default function CzytnikiPage() {
 
             {/* Tabela porównawcza */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Porównanie czytników kodów Zebra DS2208 vs DS2278 do EZD RP">
                 <thead>
                   <tr className="border-b-2 border-slate-200">
-                    <th className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
-                    <th className="text-center py-3 px-4 font-bold text-slate-900">DS2208</th>
-                    <th className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">DS2278</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-slate-900">DS2208</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">DS2278</th>
                   </tr>
                 </thead>
                 <tbody>

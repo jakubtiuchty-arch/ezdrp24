@@ -69,12 +69,25 @@ export default function DrukarkiPage() {
     }
   ];
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Czy mogę użyć zwykłej drukarki do etykiet w EZD RP?", "acceptedAnswer": { "@type": "Answer", "text": "Nie. System EZD RP wymaga drukarki termotransferowej, ponieważ wydruk musi być czytelny przez minimum 5 lat (wymóg Składu Chronologicznego). Zwykłe drukarki termiczne (paragonowe) generują wydruk, który blaknie po kilku miesiącach pod wpływem światła i wilgoci." }},
+      { "@type": "Question", "name": "Jakie etykiety pasują do drukarek Zebra ZD230t i ZD421t?", "acceptedAnswer": { "@type": "Answer", "text": "Oba modele obsługują etykiety o szerokości do 104mm. Najczęściej stosowane rozmiary w EZD RP to 50×30 mm (na paczki i przesyłki) oraz 80×50 mm (na teczki aktowe i segregatory). Etykiety muszą być papierowe termotransferowe." }},
+      { "@type": "Question", "name": "Co to jest system cartridge w Zebra ZD421t?", "acceptedAnswer": { "@type": "Answer", "text": "System cartridge to opatentowane przez Zebra rozwiązanie, w którym taśma barwiąca (ribbon) jest zamknięta w wymiennym wkładzie. Wymiana trwa około 30 sekund i nie wymaga nawijania taśmy na rdzeń — wystarczy wyjąć stary cartridge i włożyć nowy." }},
+      { "@type": "Question", "name": "Ile etykiet wydrukuje jedna taśma barwiąca?", "acceptedAnswer": { "@type": "Answer", "text": "Standardowa taśma wax-resin o długości 74m i szerokości 110mm wystarczy na ok. 1500-2500 etykiet w formacie 50×30 mm, w zależności od pokrycia nadrukiem. Do każdego zestawu EZD dołączamy 2 taśmy gratis na start." }},
+      { "@type": "Question", "name": "Czy drukarka EZD wymaga sterowników?", "acceptedAnswer": { "@type": "Answer", "text": "Drukarki Zebra ZD230t i ZD421t działają w trybie Plug & Play — po podłączeniu USB system Windows automatycznie wykrywa urządzenie. Opcjonalnie można zainstalować Zebra Setup Utilities do zaawansowanej konfiguracji." }}
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {productLd.map((ld, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       ))}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <Header />
 
       <main className="flex-grow">
@@ -250,12 +263,12 @@ export default function DrukarkiPage() {
 
             {/* Tabela porównawcza */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Porównanie drukarek etykiet Zebra ZD230t vs ZD421t do EZD RP">
                 <thead>
                   <tr className="border-b-2 border-slate-200">
-                    <th className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
-                    <th className="text-center py-3 px-4 font-bold text-slate-900">ZD230t</th>
-                    <th className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">ZD421t</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-slate-900">ZD230t</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">ZD421t</th>
                   </tr>
                 </thead>
                 <tbody>

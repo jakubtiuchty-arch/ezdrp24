@@ -69,12 +69,25 @@ export default function SkaneryPage() {
     }
   ];
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Czy zwykły skaner biurkowy (flatbed) wystarczy do EZD RP?", "acceptedAnswer": { "@type": "Answer", "text": "Technicznie tak, ale jest to bardzo niepraktyczne. Skaner flatbed wymaga ręcznego podawania każdej kartki. Skanery z podajnikiem ADF (jak Epson DS-730DN i DS-790Wn) automatycznie pobierają kolejne strony i skanują obie strony jednocześnie — przy 40-45 stronach na minutę różnica jest ogromna." }},
+      { "@type": "Question", "name": "Co to jest PDF/A i dlaczego EZD RP wymaga tego formatu?", "acceptedAnswer": { "@type": "Answer", "text": "PDF/A (ISO 19005) to wersja PDF zaprojektowana do długoterminowej archiwizacji. W odróżnieniu od zwykłego PDF, zawiera wszystkie fonty i zasoby w pliku — dokument wygląda identycznie na każdym urządzeniu, nawet za 20 lat. EZD RP wymaga PDF/A ponieważ dokumenty muszą być archiwizowane zgodnie z Instrukcją Kancelaryjną." }},
+      { "@type": "Question", "name": "Czym jest DocuScan w Epson DS-790Wn?", "acceptedAnswer": { "@type": "Answer", "text": "DocuScan to oprogramowanie Epson umożliwiające skanowanie bezpośrednio do systemu EZD RP bez podłączania do komputera. Na ekranie dotykowym skanera wybierasz profil, kładziesz dokumenty w podajniku i naciskasz start. Skan trafia automatycznie do wskazanego folderu sieciowego." }},
+      { "@type": "Question", "name": "Ile dokumentów dziennie obsługują te skanery?", "acceptedAnswer": { "@type": "Answer", "text": "DS-730DN skanuje 40 stron/min (80 obrazów w trybie duplex). DS-790Wn jest szybszy: 45 stron/min. W praktyce typowe stanowisko EZD w urzędzie gminy skanuje 50-200 dokumentów dziennie — oba modele obsłużą to bez problemu. Zalecany cykl pracy to do 6000 stron dziennie." }},
+      { "@type": "Question", "name": "Czy skanery Epson współpracują z oprogramowaniem EZD RP od NASK?", "acceptedAnswer": { "@type": "Answer", "text": "Tak. Oba skanery obsługują standardowe interfejsy TWAIN i ISIS, z którymi integruje się system EZD RP. DS-730DN wymaga sterownika na PC. DS-790Wn może dodatkowo skanować bezpośrednio do folderu sieciowego (standalone)." }}
+    ]
+  };
+
   return (
     <div className="min-h-screen flex flex-col font-sans">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {productLd.map((ld, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       ))}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <Header />
 
       <main className="flex-grow">
@@ -258,12 +271,12 @@ export default function SkaneryPage() {
 
             {/* Tabela porównawcza */}
             <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="w-full text-sm border-collapse" aria-label="Porównanie skanerów dokumentów Epson DS-730DN vs DS-790Wn do EZD RP">
                 <thead>
                   <tr className="border-b-2 border-slate-200">
-                    <th className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
-                    <th className="text-center py-3 px-4 font-bold text-slate-900">DS-730DN</th>
-                    <th className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">DS-790Wn</th>
+                    <th scope="col" className="text-left py-3 px-4 font-bold text-slate-900">Parametr</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-slate-900">DS-730DN</th>
+                    <th scope="col" className="text-center py-3 px-4 font-bold text-violet-700 bg-violet-50">DS-790Wn</th>
                   </tr>
                 </thead>
                 <tbody>
