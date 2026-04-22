@@ -88,7 +88,7 @@ export default function CzytnikiPage() {
               src="/czytniki_ezd_hero.webp"
               alt="Czytnik kodów kreskowych na stanowisku EZD RP"
               fill
-              className="object-cover object-right"
+              className="object-contain object-right"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-r from-white from-40% via-white/90 via-55% to-transparent to-70%" />
