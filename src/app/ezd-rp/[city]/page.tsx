@@ -135,6 +135,13 @@ export default async function CityPage({ params }: Props) {
             <p className="mt-2 text-xs text-slate-500">
               Obsługujemy m.in.: {cityData.institutions}. Czas dostawy: <strong>{cityData.deliveryTime}</strong>.
             </p>
+            <div className="mt-4 flex flex-wrap gap-3 justify-center">
+              <Link href="/ezd-rp/drukarki" className="text-xs font-medium text-violet-700 hover:underline">Drukarki etykiet do EZD</Link>
+              <span className="text-violet-300">·</span>
+              <Link href="/ezd-rp/czytniki" className="text-xs font-medium text-violet-700 hover:underline">Czytniki kodów do EZD</Link>
+              <span className="text-violet-300">·</span>
+              <Link href="/ezd-rp/skanery" className="text-xs font-medium text-violet-700 hover:underline">Skanery dokumentów do EZD</Link>
+            </div>
           </div>
         </div>
         <Products />

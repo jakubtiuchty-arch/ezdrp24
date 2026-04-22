@@ -38,11 +38,15 @@ export default function CzytnikiPage() {
       "description": "Przewodowy czytnik kodów kreskowych 1D/2D/QR do rejestracji wpływów (RPW) w systemie EZD RP. USB Plug & Play, odporny na upadki z 1.5m, klasa IP52.",
       "brand": { "@type": "Brand", "name": "Zebra" },
       "sku": "DS2208",
-      "image": "https://ezdrp24.com.pl/ds2208_1.webp",
+      "image": "https://www.ezdrp24.com.pl/ds2208_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "449",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     },
     {
@@ -52,11 +56,15 @@ export default function CzytnikiPage() {
       "description": "Bezprzewodowy czytnik kodów Bluetooth do EZD RP. Zasięg 10m, bateria na 14h pracy, stacja dokująca w zestawie. Idealny do okien podawczych i mobilnej rejestracji.",
       "brand": { "@type": "Brand", "name": "Zebra" },
       "sku": "DS2278",
-      "image": "https://ezdrp24.com.pl/ds2278_1.webp",
+      "image": "https://www.ezdrp24.com.pl/ds2278_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "999",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     }
   ];
@@ -375,6 +383,29 @@ export default function CzytnikiPage() {
                   <p className="text-sm text-slate-600 leading-relaxed">{item.a}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Cross-links */}
+        <section className="py-10 bg-white border-b border-slate-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Skompletuj stanowisko EZD RP</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link href="/ezd-rp/drukarki" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Drukarki etykiet do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Zebra ZD230t vs ZD421t</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
+              <Link href="/ezd-rp/skanery" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Skanery dokumentów do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Epson DS-730DN vs DS-790Wn</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
             </div>
           </div>
         </section>

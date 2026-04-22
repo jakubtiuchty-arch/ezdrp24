@@ -26,13 +26,13 @@ export function Hero({ cityName }: HeroProps) {
           {/* Text Content */}
           <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-slate-950 leading-tight tracking-tight drop-shadow-sm">
             Kompletne <span className="text-violet-700 block sm:inline">Zestawy EZD RP</span> {cityName && <span className="block text-slate-800 mt-2">{cityName}</span>}
-            {!cityName && <span className="block text-xl sm:text-2xl mt-3 font-normal text-slate-700">Sprzęt i urządzenia dla jednostek publicznych</span>}
+            {!cityName && <span className="block text-xl sm:text-2xl mt-3 font-normal text-slate-700">Sprzęt do EZD dla jednostek publicznych</span>}
           </h1>
           
           <p className="mt-4 text-base sm:text-lg text-slate-800 max-w-xl font-medium">
             {cityName 
               ? `Dostarczamy certyfikowany sprzęt EZD do urzędów i instytucji w mieście ${cityName} i okolicach. ` 
-              : "Dostarczamy certyfikowany sprzęt EZD: skanery dokumentów, drukarki etykiet i czytniki kodów. "
+              : "Dostarczamy certyfikowany sprzęt do EZD RP: skanery dokumentów, drukarki etykiet i czytniki kodów kreskowych. "
             }
             Nasze urządzenia są w pełni zgodne z <strong className="font-bold text-slate-950">wymaganiami EZD RP</strong> w zakresie rejestracji wpływów i archiwizacji.
           </p>
@@ -41,7 +41,7 @@ export function Hero({ cityName }: HeroProps) {
             {[
               "Gotowe zestawy EZD do szybkiego wdrożenia w kancelarii.",
               "Skaner EZD z OCR (PDF/A) i drukarka kodów kreskowych.",
-              "Pełna zgodność z procedurami instrukcji kancelaryjnej."
+              "Pełna zgodność z wymaganiami Instrukcji Kancelaryjnej."
             ].map((item, idx) => (
               <li key={idx} className="flex items-start gap-3">
                 <div className="mt-0.5 h-5 w-5 flex-none relative">

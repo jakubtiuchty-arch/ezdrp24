@@ -44,7 +44,7 @@ export function Pricing() {
             Wybierz zestaw EZD dopasowany do Twojej jednostki
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600">
-            Oferujemy kompletne <strong>stanowiska pracy EZD RP</strong>. Możliwość zakupu z odroczonym terminem płatności.
+            Oferujemy kompletne <strong>zestawy sprzętu do EZD RP</strong>. Możliwość zakupu z odroczonym terminem płatności.
           </p>
         </div>
 

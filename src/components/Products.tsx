@@ -1,7 +1,8 @@
 "use client";
 
-import { Check, Play } from "lucide-react";
+import { Check, Play, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export function Products() {
@@ -20,7 +21,8 @@ export function Products() {
         {/* Czytniki */}
         <div className="mb-16">
           <h3 className="text-sm font-bold text-violet-700 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <span className="w-8 h-px bg-violet-300"></span> Czytniki Kodów do EZD
+            <span className="w-8 h-px bg-violet-300"></span> Czytniki kodów do EZD
+            <Link href="/ezd-rp/czytniki" className="ml-auto text-xs font-medium text-violet-600 hover:underline flex items-center gap-1 normal-case tracking-normal">Porównaj modele <ArrowRight className="w-3 h-3" /></Link>
           </h3>
           <div className="grid md:grid-cols-2 gap-8">
             <ProductCard
@@ -47,7 +49,8 @@ export function Products() {
         {/* Drukarki */}
         <div className="mb-16">
           <h3 className="text-sm font-bold text-violet-700 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <span className="w-8 h-px bg-violet-300"></span> Drukarki Etykiet EZD
+            <span className="w-8 h-px bg-violet-300"></span> Drukarki etykiet do EZD
+            <Link href="/ezd-rp/drukarki" className="ml-auto text-xs font-medium text-violet-600 hover:underline flex items-center gap-1 normal-case tracking-normal">Porównaj modele <ArrowRight className="w-3 h-3" /></Link>
           </h3>
           <div className="grid md:grid-cols-2 gap-8">
             <ProductCard
@@ -80,7 +83,8 @@ export function Products() {
         {/* Skanery */}
         <div>
           <h3 className="text-sm font-bold text-violet-700 uppercase tracking-wider mb-6 flex items-center gap-2">
-            <span className="w-8 h-px bg-violet-300"></span> Skanery Dokumentów do EZD
+            <span className="w-8 h-px bg-violet-300"></span> Skanery dokumentów do EZD
+            <Link href="/ezd-rp/skanery" className="ml-auto text-xs font-medium text-violet-600 hover:underline flex items-center gap-1 normal-case tracking-normal">Porównaj modele <ArrowRight className="w-3 h-3" /></Link>
           </h3>
           <div className="grid md:grid-cols-2 gap-8">
             <ProductCard

@@ -82,7 +82,8 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Product",
     "name": "Zestawy sprzętowe do EZD RP",
-    "description": "Kompletne stanowiska pracy (skaner, drukarka, czytnik) zgodne z wymogami systemu EZD RP.",
+    "description": "Kompletne zestawy sprzętu do EZD RP (skaner, drukarka, czytnik) zgodne z wymogami systemu EZD RP i rekomendacjami NASK.",
+    "dateModified": new Date().toISOString().slice(0, 10),
     "brand": {
       "@type": "Brand",
       "name": "Scanter"

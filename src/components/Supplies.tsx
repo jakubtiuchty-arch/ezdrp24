@@ -36,7 +36,7 @@ export function Supplies() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="w-1.5 h-1.5 bg-violet-500 rounded-full mt-2 shrink-0"></span>
-                Trwałe, zgodne z wymogami archiwum
+                Trwałe, zgodne z wymogami archiwizacji EZD RP
               </li>
             </ul>
             <Link 

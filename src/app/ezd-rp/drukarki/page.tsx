@@ -38,11 +38,15 @@ export default function DrukarkiPage() {
       "description": "Ekonomiczna drukarka termotransferowa do systemu EZD RP. Szerokość druku 104mm, trwałość wydruku 5+ lat, zgodna ze Składem Chronologicznym.",
       "brand": { "@type": "Brand", "name": "Zebra" },
       "sku": "ZD230t",
-      "image": "https://ezdrp24.com.pl/zd230_1.webp",
+      "image": "https://www.ezdrp24.com.pl/zd230_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "1101",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     },
     {
@@ -52,11 +56,15 @@ export default function DrukarkiPage() {
       "description": "Zaawansowana drukarka termotransferowa do EZD RP z systemem wymiany taśmy na cartridge. Szybszy druk, ruchomy czujnik etykiet.",
       "brand": { "@type": "Brand", "name": "Zebra" },
       "sku": "ZD421t",
-      "image": "https://ezdrp24.com.pl/zd421_1.webp",
+      "image": "https://www.ezdrp24.com.pl/zd421_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "1850",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     }
   ];
@@ -363,6 +371,29 @@ export default function DrukarkiPage() {
                   <p className="text-sm text-slate-600 leading-relaxed">{item.a}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Cross-links */}
+        <section className="py-10 bg-white border-b border-slate-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Skompletuj stanowisko EZD RP</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link href="/ezd-rp/czytniki" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Czytniki kodów do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Zebra DS2208 vs DS2278</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
+              <Link href="/ezd-rp/skanery" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Skanery dokumentów do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Epson DS-730DN vs DS-790Wn</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
             </div>
           </div>
         </section>

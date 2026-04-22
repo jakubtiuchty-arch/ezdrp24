@@ -38,11 +38,15 @@ export default function SkaneryPage() {
       "description": "Wydajny skaner dokumentów z podajnikiem ADF do systemu EZD RP. 40 stron/minutę, skanowanie dwustronne, OCR z warstwą tekstową, format PDF/A. Interfejs USB + Ethernet.",
       "brand": { "@type": "Brand", "name": "Epson" },
       "sku": "DS-730DN",
-      "image": "https://ezdrp24.com.pl/ds730_1.webp",
+      "image": "https://www.ezdrp24.com.pl/ds730_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "1649",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     },
     {
@@ -52,11 +56,15 @@ export default function SkaneryPage() {
       "description": "Samodzielny skaner EZD z dużym ekranem dotykowym. Skanowanie bezpośrednio do folderu sieciowego bez podłączania do PC. Integracja z DocuScan, Wi-Fi + Ethernet.",
       "brand": { "@type": "Brand", "name": "Epson" },
       "sku": "DS-790Wn",
-      "image": "https://ezdrp24.com.pl/ds790_1.webp",
+      "image": "https://www.ezdrp24.com.pl/ds790_1.webp",
+      "dateModified": new Date().toISOString().slice(0, 10),
       "offers": {
         "@type": "Offer",
+        "price": "2750",
         "priceCurrency": "PLN",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "seller": { "@type": "Organization", "name": "Scanter Sp. z o.o." }
       }
     }
   ];
@@ -99,7 +107,7 @@ export default function SkaneryPage() {
                 Skanery dokumentów do <span className="text-violet-700">EZD RP</span>
               </h1>
               <p className="mt-4 text-lg text-slate-600 leading-relaxed max-w-2xl">
-                Skaner dokumentów jest kluczowym urządzeniem na stanowisku EZD RP — tworzy <strong>cyfrowy obraz pisma z warstwą tekstową (OCR)</strong> i zapisuje go w formacie <strong>PDF/A</strong> wymaganym przez Instrukcję Kancelaryjną. Oferujemy dwa skanery Epson z podajnikiem ADF i skanowaniem dwustronnym.
+                Skaner dokumentów jest kluczowym urządzeniem na stanowisku EZD RP — tworzy <strong>cyfrowy obraz dokumentu z warstwą tekstową (OCR)</strong> i zapisuje go w formacie <strong>PDF/A</strong> zgodnie z wymaganiami Instrukcji Kancelaryjnej. Oferujemy dwa skanery Epson z podajnikiem ADF i skanowaniem dwustronnym.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
@@ -381,6 +389,29 @@ export default function SkaneryPage() {
                   <p className="text-sm text-slate-600 leading-relaxed">{item.a}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Cross-links */}
+        <section className="py-10 bg-white border-b border-slate-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Skompletuj stanowisko EZD RP</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Link href="/ezd-rp/drukarki" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Drukarki etykiet do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Zebra ZD230t vs ZD421t</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
+              <Link href="/ezd-rp/czytniki" className="bg-slate-50 rounded-xl border border-slate-200 p-5 hover:shadow-md transition-shadow flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-900">Czytniki kodów do EZD</p>
+                  <p className="text-sm text-slate-500 mt-1">Zebra DS2208 vs DS2278</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-violet-600 shrink-0" />
+              </Link>
             </div>
           </div>
         </section>
