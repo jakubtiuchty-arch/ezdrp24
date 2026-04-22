@@ -82,13 +82,19 @@ export default function DrukarkiPage() {
         </nav>
 
         {/* Hero */}
-        <section className="bg-white border-b border-slate-200 py-12 lg:py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="relative bg-white border-b border-slate-200 py-12 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 hidden lg:block">
+            <Image
+              src="/drukarki_ezd_hero.webp"
+              alt="Drukarka etykiet Zebra na stanowisku EZD RP"
+              fill
+              className="object-contain object-right"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-white from-40% via-white/90 via-55% to-transparent to-70%" />
+          </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
-              <div className="flex items-center gap-2 mb-4">
-                <Printer className="w-5 h-5 text-violet-600" />
-                <span className="text-sm font-medium text-violet-600 uppercase tracking-wide">Drukarki etykiet</span>
-              </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight">
                 Drukarki etykiet do <span className="text-violet-700">EZD RP</span>
               </h1>
