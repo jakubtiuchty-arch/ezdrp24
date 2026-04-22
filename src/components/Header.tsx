@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import clsx from "clsx";
 
 export function Header() {
@@ -52,6 +52,25 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+            {/* Sprzęt dropdown */}
+            <div className="relative group">
+              <button className="flex items-center gap-1 text-slate-700 hover:text-slate-900 transition-colors text-sm font-medium">
+                Sprzęt <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                <div className="bg-white rounded-lg shadow-lg border border-slate-200 py-2 min-w-[200px]">
+                  <Link href="/ezd-rp/czytniki" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    Czytniki kodów do EZD
+                  </Link>
+                  <Link href="/ezd-rp/drukarki" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    Drukarki etykiet do EZD
+                  </Link>
+                  <Link href="/ezd-rp/skanery" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors">
+                    Skanery dokumentów do EZD
+                  </Link>
+                </div>
+              </div>
+            </div>
             <Link
               href="#formularz"
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-violet-700 text-white hover:bg-violet-800 text-sm font-medium transition-colors"
@@ -95,6 +114,23 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="border-t border-slate-100 pt-2">
+            <p className="text-xs text-slate-400 uppercase tracking-wide mb-1">Sprzęt do EZD</p>
+            {[
+              { href: "/ezd-rp/czytniki", label: "Czytniki kodów" },
+              { href: "/ezd-rp/drukarki", label: "Drukarki etykiet" },
+              { href: "/ezd-rp/skanery", label: "Skanery dokumentów" },
+            ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="py-2 pl-3 text-slate-600 font-medium block"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+          </div>
           <Link
             href="#formularz"
             className="inline-flex justify-center px-4 py-2 rounded-md bg-violet-700 text-white hover:bg-violet-800 font-medium transition-colors"
