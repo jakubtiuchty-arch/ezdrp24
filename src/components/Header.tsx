@@ -9,10 +9,10 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "#jak-to-dziala", label: "Jak to działa" },
-    { href: "#urzadzenia", label: "Urządzenia" },
-    { href: "#warianty", label: "Warianty" },
-    { href: "#materialy", label: "Materiały eksploatacyjne" },
+    { href: "/ezd-rp/czytniki", label: "Czytniki do EZD" },
+    { href: "/ezd-rp/drukarki", label: "Drukarki do EZD" },
+    { href: "/ezd-rp/skanery", label: "Skanery do EZD" },
+    { href: "#warianty", label: "Zestawy EZD RP" },
   ];
 
   return (
