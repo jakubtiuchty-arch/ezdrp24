@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   description: "Która drukarka etykiet do EZD RP jest lepsza? Porównanie Zebra ZD230t i ZD421t — druk termotransferowy, trwałość 5+ lat, zgodność ze Składem Chronologicznym. Ceny od 899 zł netto.",
   keywords: ["EZD drukarka", "drukarka etykiet EZD", "drukarka do EZD RP", "Zebra ZD230t", "Zebra ZD421t", "drukarka kodów kreskowych EZD", "Skład Chronologiczny drukarka"],
   alternates: {
-    canonical: "https://ezdrp24.com.pl/ezd-rp/drukarki",
+    canonical: "https://www.ezdrp24.com.pl/ezd-rp/drukarki",
   },
   openGraph: {
     title: "Drukarki etykiet do EZD RP — Zebra ZD230t vs ZD421t",
     description: "Porównanie drukarek do systemu EZD RP. Druk termotransferowy, trwałość 5+ lat, zgodność ze Składem Chronologicznym.",
-    url: "https://ezdrp24.com.pl/ezd-rp/drukarki",
+    url: "https://www.ezdrp24.com.pl/ezd-rp/drukarki",
   },
 };
 
@@ -25,8 +25,8 @@ export default function DrukarkiPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://ezdrp24.com.pl" },
-      { "@type": "ListItem", "position": 2, "name": "Drukarki etykiet do EZD", "item": "https://ezdrp24.com.pl/ezd-rp/drukarki" }
+      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.ezdrp24.com.pl" },
+      { "@type": "ListItem", "position": 2, "name": "Drukarki etykiet do EZD", "item": "https://www.ezdrp24.com.pl/ezd-rp/drukarki" }
     ]
   };
 

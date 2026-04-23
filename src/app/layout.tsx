@@ -5,7 +5,7 @@ import "./globals.css";
 const urbanist = Urbanist({ subsets: ["latin", "latin-ext"] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://ezdrp24.com.pl'),
+  metadataBase: new URL('https://www.ezdrp24.com.pl'),
   alternates: {
     canonical: '/',
   },
@@ -16,12 +16,12 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Zestawy sprzętowe do systemu EZD RP",
     description: "Skanery, drukarki i czytniki zgodne z wymogami EZD RP. Wyposażenie punktów kancelaryjnych i sekretariatów.",
-    url: "https://ezdrp24.com.pl",
+    url: "https://www.ezdrp24.com.pl",
     siteName: "EZD RP Zestawy",
     locale: "pl_PL",
     type: "website",
     images: [{
-      url: "https://ezdrp24.com.pl/og-image.png",
+      url: "https://www.ezdrp24.com.pl/og-image.png",
       width: 1200,
       height: 630,
       alt: "Zestawy sprzętowe EZD RP — skanery, drukarki etykiet, czytniki kodów",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sprzęt do EZD RP — Zestawy dla Urzędów",
     description: "Kompletne stanowiska pracy EZD RP: skanery OCR, drukarki etykiet, czytniki kodów. Zgodność z NASK.",
-    images: ["https://ezdrp24.com.pl/og-image.png"],
+    images: ["https://www.ezdrp24.com.pl/og-image.png"],
   },
   robots: {
     index: true,
@@ -56,8 +56,8 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Scanter Sp. z o.o.",
-    "url": "https://ezdrp24.com.pl",
-    "logo": "https://ezdrp24.com.pl/ezdrp_logo.png",
+    "url": "https://www.ezdrp24.com.pl",
+    "logo": "https://www.ezdrp24.com.pl/ezdrp_logo.png",
     "email": "biuro@scanter.pl",
     "description": "Dostawca sprzętu do Elektronicznego Zarządzania Dokumentacją (EZD RP) dla administracji publicznej.",
     "contactPoint": {
@@ -231,7 +231,7 @@ export default function RootLayout({
         "@type": "ListItem",
         "position": 1,
         "name": "Strona główna",
-        "item": "https://ezdrp24.com.pl"
+        "item": "https://www.ezdrp24.com.pl"
       }
     ]
   };

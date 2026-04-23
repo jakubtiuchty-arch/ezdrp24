@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/private/', '/admin/'],
     },
-    sitemap: 'https://ezdrp24.com.pl/sitemap.xml',
+    sitemap: 'https://www.ezdrp24.com.pl/sitemap.xml',
   };
 }
 

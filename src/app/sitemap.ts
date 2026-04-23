@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { cities } from '@/lib/cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ezdrp24.com.pl';
+  const baseUrl = 'https://www.ezdrp24.com.pl';
   
   // Strony miast
   const cityPages = cities.map((city) => ({

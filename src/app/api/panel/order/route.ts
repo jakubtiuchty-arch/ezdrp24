@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
       </ul>
     </div>
     <div style="text-align:center;margin-top:24px;">
-      <a href="https://ezdrp24.com.pl/panel/zamowienia" style="display:inline-block;background:#7c3aed;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Zobacz zamówienie w panelu</a>
+      <a href="https://www.ezdrp24.com.pl/panel/zamowienia" style="display:inline-block;background:#7c3aed;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">Zobacz zamówienie w panelu</a>
     </div>
   `);
 

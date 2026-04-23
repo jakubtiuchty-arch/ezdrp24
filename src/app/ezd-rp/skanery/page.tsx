@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   description: "Który skaner dokumentów do EZD RP wybrać? Porównanie Epson DS-730DN (40 stron/min) i DS-790Wn (z ekranem dotykowym). OCR, PDF/A, skanowanie dwustronne. Zgodność z NASK.",
   keywords: ["EZD skaner", "skaner dokumentów EZD", "skaner do EZD RP", "Epson DS-730DN", "Epson DS-790Wn", "skaner OCR EZD", "skaner PDF/A", "skaner ADF EZD"],
   alternates: {
-    canonical: "https://ezdrp24.com.pl/ezd-rp/skanery",
+    canonical: "https://www.ezdrp24.com.pl/ezd-rp/skanery",
   },
   openGraph: {
     title: "Skanery dokumentów do EZD RP — Epson DS-730DN vs DS-790Wn",
     description: "Porównanie skanerów do systemu EZD RP. OCR, PDF/A, skanowanie dwustronne, podajnik ADF. Zgodność z NASK.",
-    url: "https://ezdrp24.com.pl/ezd-rp/skanery",
+    url: "https://www.ezdrp24.com.pl/ezd-rp/skanery",
   },
 };
 
@@ -25,8 +25,8 @@ export default function SkaneryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://ezdrp24.com.pl" },
-      { "@type": "ListItem", "position": 2, "name": "Skanery dokumentów do EZD", "item": "https://ezdrp24.com.pl/ezd-rp/skanery" }
+      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.ezdrp24.com.pl" },
+      { "@type": "ListItem", "position": 2, "name": "Skanery dokumentów do EZD", "item": "https://www.ezdrp24.com.pl/ezd-rp/skanery" }
     ]
   };
 

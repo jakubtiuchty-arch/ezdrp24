@@ -41,13 +41,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `Kompletne zestawy EZD RP dla jednostek w mieście ${cityData.name} (woj. ${cityData.voivodeship}). Skanery, drukarki i czytniki zgodne z wymogami. Szybka dostawa i faktura z odroczonym terminem.`,
     keywords: [`EZD RP ${cityData.name}`, `zestawy ezd ${cityData.name}`, `sprzęt ezd ${cityData.name}`, "skanery dokumentów", "drukarki etykiet"],
     alternates: {
-      canonical: `https://ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
+      canonical: `https://www.ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
     },
     openGraph: {
       title: `Zestawy EZD RP ${cityData.name} — Sprzęt dla Urzędów`,
       description: `Dostarczamy sprzęt EZD RP do urzędów w mieście ${cityData.name} i woj. ${cityData.voivodeship}. Skanery, drukarki etykiet, czytniki kodów.`,
-      url: `https://ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
-      images: [{ url: "https://ezdrp24.com.pl/og-image.png", width: 1200, height: 630 }],
+      url: `https://www.ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
+      images: [{ url: "https://www.ezdrp24.com.pl/og-image.png", width: 1200, height: 630 }],
     },
   };
 }
@@ -68,13 +68,13 @@ export default async function CityPage({ params }: Props) {
         "@type": "ListItem",
         "position": 1,
         "name": "Strona główna",
-        "item": "https://ezdrp24.com.pl"
+        "item": "https://www.ezdrp24.com.pl"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": `EZD RP ${cityData.name}`,
-        "item": `https://ezdrp24.com.pl/ezd-rp/${cityData.slug}`
+        "item": `https://www.ezdrp24.com.pl/ezd-rp/${cityData.slug}`
       }
     ]
   };
@@ -84,7 +84,7 @@ export default async function CityPage({ params }: Props) {
     "@type": "LocalBusiness",
     "name": "Scanter Sp. z o.o.",
     "description": `Dostawca sprzętu EZD RP dla urzędów i jednostek publicznych w mieście ${cityData.name} i woj. ${cityData.voivodeship}.`,
-    "url": `https://ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
+    "url": `https://www.ezdrp24.com.pl/ezd-rp/${cityData.slug}`,
     "telephone": "+48-601-828-711",
     "email": "biuro@scanter.pl",
     "address": {

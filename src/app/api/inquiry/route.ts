@@ -43,7 +43,7 @@ export async function POST(req: Request) {
               ${body.notes ? `<tr><td style="padding:8px;border-bottom:1px solid #eee;color:#666;">Uwagi</td><td style="padding:8px;border-bottom:1px solid #eee;">${body.notes}</td></tr>` : ""}
             </table>
             <p style="margin-top:16px;color:#999;font-size:12px;">
-              <a href="https://ezdrp24.com.pl/admin">Otwórz panel administracyjny</a>
+              <a href="https://www.ezdrp24.com.pl/admin">Otwórz panel administracyjny</a>
             </p>
           `,
         });
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       if (body.variant && getVariantProducts(body.variant) && body.email) {
         try {
           const offerNumber = generateOfferNumber();
-          const offerLink = `https://ezdrp24.com.pl/api/offer/${inquiry.id}`;
+          const offerLink = `https://www.ezdrp24.com.pl/api/offer/${inquiry.id}`;
 
           const isEdu = body.org ? isEducationalInstitution(body.org) : false;
 

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Polityka Prywatności | Scanter Sp. z o.o.",
   description: "Zasady przetwarzania danych osobowych i polityka cookies serwisu ezdrp24.com.pl. Administrator: Scanter Sp. z o.o.",
   alternates: {
-    canonical: "https://ezdrp24.com.pl/polityka-prywatnosci",
+    canonical: "https://www.ezdrp24.com.pl/polityka-prywatnosci",
   },
 };
 
@@ -16,8 +16,8 @@ export default function PrivacyPolicy() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://ezdrp24.com.pl" },
-      { "@type": "ListItem", "position": 2, "name": "Polityka Prywatności", "item": "https://ezdrp24.com.pl/polityka-prywatnosci" }
+      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.ezdrp24.com.pl" },
+      { "@type": "ListItem", "position": 2, "name": "Polityka Prywatności", "item": "https://www.ezdrp24.com.pl/polityka-prywatnosci" }
     ]
   };
 
@@ -274,7 +274,7 @@ export default function PrivacyPolicy() {
               <div>
                 <h2 className="text-xl font-bold text-slate-900 mb-3">9. Zmiany polityki prywatności</h2>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Administrator zastrzega sobie prawo do wprowadzania zmian w niniejszej Polityce Prywatności. O istotnych zmianach będziemy informować poprzez komunikat na stronie internetowej. Aktualna wersja polityki jest zawsze dostępna pod adresem <a href="https://ezdrp24.com.pl/polityka-prywatnosci" className="text-violet-600 hover:underline">ezdrp24.com.pl/polityka-prywatnosci</a>.
+                  Administrator zastrzega sobie prawo do wprowadzania zmian w niniejszej Polityce Prywatności. O istotnych zmianach będziemy informować poprzez komunikat na stronie internetowej. Aktualna wersja polityki jest zawsze dostępna pod adresem <a href="https://www.ezdrp24.com.pl/polityka-prywatnosci" className="text-violet-600 hover:underline">ezdrp24.com.pl/polityka-prywatnosci</a>.
                 </p>
               </div>
             </div>

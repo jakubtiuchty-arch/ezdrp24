@@ -11,12 +11,12 @@ export const metadata: Metadata = {
   description: "Który czytnik kodów do EZD RP wybrać? Porównanie Zebra DS2208 (przewodowy) i DS2278 (bezprzewodowy). Odczyt kodów 1D, 2D i QR do rejestracji wpływów RPW. Plug & Play USB.",
   keywords: ["EZD czytnik", "czytnik kodów EZD", "czytnik do EZD RP", "Zebra DS2208", "Zebra DS2278", "czytnik kodów kreskowych RPW", "skaner kodów EZD"],
   alternates: {
-    canonical: "https://ezdrp24.com.pl/ezd-rp/czytniki",
+    canonical: "https://www.ezdrp24.com.pl/ezd-rp/czytniki",
   },
   openGraph: {
     title: "Czytniki kodów do EZD RP — Zebra DS2208 vs DS2278",
     description: "Porównanie czytników kodów do systemu EZD RP. Odczyt 1D, 2D, QR — rejestracja wpływów RPW. Przewodowy vs bezprzewodowy.",
-    url: "https://ezdrp24.com.pl/ezd-rp/czytniki",
+    url: "https://www.ezdrp24.com.pl/ezd-rp/czytniki",
   },
 };
 
@@ -25,8 +25,8 @@ export default function CzytnikiPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://ezdrp24.com.pl" },
-      { "@type": "ListItem", "position": 2, "name": "Czytniki kodów do EZD", "item": "https://ezdrp24.com.pl/ezd-rp/czytniki" }
+      { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.ezdrp24.com.pl" },
+      { "@type": "ListItem", "position": 2, "name": "Czytniki kodów do EZD", "item": "https://www.ezdrp24.com.pl/ezd-rp/czytniki" }
     ]
   };
 
