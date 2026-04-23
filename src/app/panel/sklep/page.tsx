@@ -58,7 +58,10 @@ export default function SklepPage() {
     setCart(prev => prev.filter(i => i.id !== id));
   };
 
-  const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const SHIPPING_BRUTTO = 26.99;
+  const SHIPPING_NETTO = +(SHIPPING_BRUTTO / 1.23).toFixed(2); // 21.94 zł netto
+  const subtotalNetto = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const totalNetto = subtotalNetto + SHIPPING_NETTO;
 
   const submitOrder = async () => {
     if (cart.length === 0) return;
@@ -168,12 +171,20 @@ export default function SklepPage() {
                   ))}
                 </div>
 
-                <div className="border-t border-slate-200 pt-3 mb-4">
-                  <div className="flex items-center justify-between font-bold text-slate-900">
-                    <span>Razem netto:</span>
-                    <span>{total.toFixed(2)} zł</span>
+                <div className="border-t border-slate-200 pt-3 mb-4 space-y-1.5">
+                  <div className="flex items-center justify-between text-sm text-slate-600">
+                    <span>Produkty netto:</span>
+                    <span>{subtotalNetto.toFixed(2)} zł</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">+ VAT 23% = {(total * 1.23).toFixed(2)} zł brutto</p>
+                  <div className="flex items-center justify-between text-sm text-slate-600">
+                    <span>Wysyłka (kurier):</span>
+                    <span>{SHIPPING_BRUTTO.toFixed(2)} zł brutto</span>
+                  </div>
+                  <div className="flex items-center justify-between font-bold text-slate-900 pt-1.5 border-t border-slate-100">
+                    <span>Razem netto:</span>
+                    <span>{totalNetto.toFixed(2)} zł</span>
+                  </div>
+                  <p className="text-xs text-slate-400">+ VAT 23% = {(totalNetto * 1.23).toFixed(2)} zł brutto</p>
                 </div>
 
                 <div className="mb-4">

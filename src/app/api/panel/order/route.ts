@@ -38,14 +38,24 @@ export async function POST(req: NextRequest) {
       deliveryCity: delivery?.city || user.city,
       userId: user.id,
       items: {
-        create: items.map((item: { id: string; name: string; quantity: number; price: number }) => ({
-          productId: item.id,
-          productSku: item.id,
-          productName: item.name,
-          quantity: item.quantity,
-          unit: "szt.",
-          unitPrice: item.price,
-        })),
+        create: [
+          ...items.map((item: { id: string; name: string; quantity: number; price: number }) => ({
+            productId: item.id,
+            productSku: item.id,
+            productName: item.name,
+            quantity: item.quantity,
+            unit: "szt.",
+            unitPrice: item.price,
+          })),
+          {
+            productId: "shipping",
+            productSku: "SHIPPING",
+            productName: "Wysyłka kurierska",
+            quantity: 1,
+            unit: "szt.",
+            unitPrice: 21.94, // 26.99 brutto / 1.23
+          },
+        ],
       },
     },
     include: { items: true },

@@ -99,7 +99,7 @@ export default function RootLayout({
         "@type": "OfferShippingDetails",
         "shippingRate": {
           "@type": "MonetaryAmount",
-          "value": "0",
+          "value": "21.94",
           "currency": "PLN"
         },
         "shippingDestination": {
