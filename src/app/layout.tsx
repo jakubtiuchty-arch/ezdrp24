@@ -239,6 +239,7 @@ export default function RootLayout({
   return (
     <html lang="pl" className="scroll-smooth">
       <head>
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="+I313YAPVkKbg+vmJb3jRQ" async />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbHomeLd) }}
