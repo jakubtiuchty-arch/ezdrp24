@@ -19,6 +19,13 @@ const PRODUCTS = [
     unit: "rolka",
   },
   {
+    id: "etykiety-80x50",
+    name: "Etykiety termotransferowe 80 mm × 50 mm",
+    description: "1000 szt. na rolce. Papier termotransferowy do drukarek Zebra.",
+    price: 51.00,
+    unit: "rolka",
+  },
+  {
     id: "tasma-110x74",
     name: "Taśma termotransferowa woskowo-żywiczna Zebra 110 mm × 74 m",
     description: "Taśma wax-resin do drukarek Zebra ZD230t / ZD421t. Trwały wydruk 5+ lat.",
