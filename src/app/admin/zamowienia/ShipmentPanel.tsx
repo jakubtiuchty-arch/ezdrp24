@@ -39,6 +39,16 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
   const [height, setHeight] = useState<number>(20);
   const [depth, setDepth] = useState<number>(15);
 
+  const parseResponse = async (res: Response): Promise<{ error?: string; success?: boolean }> => {
+    const text = await res.text();
+    if (!text) return {};
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { error: text.slice(0, 200) };
+    }
+  };
+
   const submit = async () => {
     setLoading(true);
     setError(null);
@@ -60,8 +70,8 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
           ],
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Błąd tworzenia przesyłki");
+      const data = await parseResponse(res);
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       window.location.reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Błąd");
@@ -76,8 +86,8 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
     setError(null);
     try {
       const res = await fetch(`/api/admin/orders/${orderId}/shipment`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Błąd anulowania");
+      const data = await parseResponse(res);
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       window.location.reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Błąd");

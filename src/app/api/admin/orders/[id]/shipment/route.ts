@@ -23,86 +23,91 @@ export async function POST(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const body = (await req.json()) as Body;
+  try {
+    const { id } = await params;
+    const body = (await req.json()) as Body;
 
-  const order = await prisma.order.findUnique({
-    where: { id },
-    include: { user: true, items: true },
-  });
-  if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
-  if (order.furgonetkaPackageId) {
-    return NextResponse.json(
-      { error: "Shipment already exists for this order" },
-      { status: 409 }
-    );
-  }
-
-  const street = order.deliveryStreet || order.user.street;
-  const postalCode = order.deliveryPostalCode || order.user.postalCode;
-  const city = order.deliveryCity || order.user.city;
-
-  if (!street || !postalCode || !city) {
-    return NextResponse.json(
-      { error: "Brak adresu dostawy w zamówieniu" },
-      { status: 400 }
-    );
-  }
-
-  const pkg = await createPackage({
-    receiver: {
-      name: order.user.contactPerson || order.user.organizationName,
-      company: order.user.organizationName,
-      email: order.user.email,
-      phone: order.user.phone || undefined,
-      street,
-      postal_code: postalCode,
-      city,
-      country_code: "PL",
-    },
-    parcels: body.parcels,
-    serviceId: body.serviceId,
-    userReferenceNumber: order.orderNumber,
-  });
-
-  const tracking = pkg.parcels?.[0]?.tracking_number || null;
-  const labelUrl = pkg.label?.url || null;
-
-  const updated = await prisma.order.update({
-    where: { id },
-    data: {
-      furgonetkaPackageId: pkg.package_id,
-      trackingNumber: tracking,
-      trackingUrl: tracking ? trackingUrl(tracking) : null,
-      labelUrl,
-      carrierService: body.serviceName,
-      carrierServiceId: body.serviceId,
-      shipmentStatus: pkg.state,
-      shipmentCreatedAt: new Date(),
-    },
-  });
-
-  // Notify client
-  if (process.env.RESEND_API_KEY && order.user.email && tracking) {
-    try {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
-        from: "EZD RP <noreply@ezdrp24.com.pl>",
-        to: order.user.email,
-        subject: `Zamówienie ${order.orderNumber} zostało wysłane`,
-        html: shipmentEmail({
-          orderNumber: order.orderNumber,
-          carrier: body.serviceName,
-          tracking,
-          trackingLink: trackingUrl(tracking),
-        }),
-      });
-    } catch (e) {
-      console.error("Resend send failed", e);
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: { user: true, items: true },
+    });
+    if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    if (order.furgonetkaPackageId) {
+      return NextResponse.json(
+        { error: "Shipment already exists for this order" },
+        { status: 409 }
+      );
     }
-  }
 
-  return NextResponse.json({ success: true, order: updated });
+    const street = order.deliveryStreet || order.user.street;
+    const postalCode = order.deliveryPostalCode || order.user.postalCode;
+    const city = order.deliveryCity || order.user.city;
+
+    if (!street || !postalCode || !city) {
+      return NextResponse.json(
+        { error: "Brak adresu dostawy w zamówieniu" },
+        { status: 400 }
+      );
+    }
+
+    const pkg = await createPackage({
+      receiver: {
+        name: order.user.contactPerson || order.user.organizationName,
+        company: order.user.organizationName,
+        email: order.user.email,
+        phone: order.user.phone || undefined,
+        street,
+        postal_code: postalCode,
+        city,
+        country_code: "PL",
+      },
+      parcels: body.parcels,
+      serviceId: body.serviceId,
+      userReferenceNumber: order.orderNumber,
+    });
+
+    const tracking = pkg.parcels?.[0]?.tracking_number || null;
+    const labelUrl = pkg.label?.url || null;
+
+    const updated = await prisma.order.update({
+      where: { id },
+      data: {
+        furgonetkaPackageId: pkg.package_id,
+        trackingNumber: tracking,
+        trackingUrl: tracking ? trackingUrl(tracking) : null,
+        labelUrl,
+        carrierService: body.serviceName,
+        carrierServiceId: body.serviceId,
+        shipmentStatus: pkg.state,
+        shipmentCreatedAt: new Date(),
+      },
+    });
+
+    if (process.env.RESEND_API_KEY && order.user.email && tracking) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: "EZD RP <noreply@ezdrp24.com.pl>",
+          to: order.user.email,
+          subject: `Zamówienie ${order.orderNumber} zostało wysłane`,
+          html: shipmentEmail({
+            orderNumber: order.orderNumber,
+            carrier: body.serviceName,
+            tracking,
+            trackingLink: trackingUrl(tracking),
+          }),
+        });
+      } catch (e) {
+        console.error("Resend send failed", e);
+      }
+    }
+
+    return NextResponse.json({ success: true, order: updated });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Nieznany błąd";
+    console.error("Shipment POST error:", e);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function DELETE(
@@ -113,29 +118,35 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const order = await prisma.order.findUnique({ where: { id } });
-  if (!order?.furgonetkaPackageId) {
-    return NextResponse.json({ error: "No shipment to cancel" }, { status: 404 });
+  try {
+    const { id } = await params;
+    const order = await prisma.order.findUnique({ where: { id } });
+    if (!order?.furgonetkaPackageId) {
+      return NextResponse.json({ error: "No shipment to cancel" }, { status: 404 });
+    }
+
+    await cancelPackage(order.furgonetkaPackageId);
+
+    await prisma.order.update({
+      where: { id },
+      data: {
+        furgonetkaPackageId: null,
+        trackingNumber: null,
+        trackingUrl: null,
+        labelUrl: null,
+        carrierService: null,
+        carrierServiceId: null,
+        shipmentStatus: null,
+        shipmentCreatedAt: null,
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Nieznany błąd";
+    console.error("Shipment DELETE error:", e);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  await cancelPackage(order.furgonetkaPackageId);
-
-  await prisma.order.update({
-    where: { id },
-    data: {
-      furgonetkaPackageId: null,
-      trackingNumber: null,
-      trackingUrl: null,
-      labelUrl: null,
-      carrierService: null,
-      carrierServiceId: null,
-      shipmentStatus: null,
-      shipmentCreatedAt: null,
-    },
-  });
-
-  return NextResponse.json({ success: true });
 }
 
 function shipmentEmail(args: {
