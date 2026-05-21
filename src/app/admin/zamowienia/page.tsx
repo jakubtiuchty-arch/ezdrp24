@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Clock, Building2, Mail, Phone, Package } from "lucide-react";
 import { OrderCheckbox } from "./OrderCheckbox";
+import { ShipmentPanel } from "./ShipmentPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +110,21 @@ export default async function AdminZamowieniaPage() {
                   {order.notes && (
                     <p className="text-xs text-slate-500 mt-3">Uwagi: {order.notes}</p>
                   )}
+
+                  <ShipmentPanel
+                    orderId={order.id}
+                    orderNumber={order.orderNumber}
+                    itemsCount={order.items.reduce((s, i) => s + i.quantity, 0)}
+                    shipment={{
+                      packageId: order.furgonetkaPackageId,
+                      trackingNumber: order.trackingNumber,
+                      trackingUrl: order.trackingUrl,
+                      labelUrl: order.labelUrl,
+                      carrierService: order.carrierService,
+                      shipmentStatus: order.shipmentStatus,
+                      shipmentCreatedAt: order.shipmentCreatedAt,
+                    }}
+                  />
                 </div>
               );
             })}

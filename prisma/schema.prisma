@@ -42,6 +42,17 @@ model Order {
   createdAt        DateTime    @default(now()) @map("created_at")
   updatedAt        DateTime    @updatedAt @map("updated_at")
   userId           String      @map("user_id")
+
+  // Furgonetka shipment
+  furgonetkaPackageId String?   @map("furgonetka_package_id")
+  trackingNumber      String?   @map("tracking_number")
+  trackingUrl         String?   @map("tracking_url")
+  labelUrl            String?   @map("label_url")
+  carrierService      String?   @map("carrier_service")
+  carrierServiceId    Int?      @map("carrier_service_id")
+  shipmentStatus      String?   @map("shipment_status")
+  shipmentCreatedAt   DateTime? @map("shipment_created_at")
+
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   items            OrderItem[]
   invoice          Invoice?

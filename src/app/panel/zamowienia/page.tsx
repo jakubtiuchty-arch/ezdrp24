@@ -75,6 +75,26 @@ export default async function ZamowieniaPage() {
                   ))}
                 </div>
 
+                {/* Shipment */}
+                {order.trackingNumber && (
+                  <div className="px-5 py-3 border-t border-slate-100 bg-violet-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div className="text-xs text-slate-700">
+                      <span className="font-semibold">Przesyłka {order.carrierService}:</span>{" "}
+                      <span className="font-mono">{order.trackingNumber}</span>
+                    </div>
+                    {order.trackingUrl && (
+                      <a
+                        href={order.trackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-violet-700 hover:text-violet-900 underline"
+                      >
+                        Śledź przesyłkę →
+                      </a>
+                    )}
+                  </div>
+                )}
+
                 {/* Footer */}
                 {order.notes && (
                   <div className="px-5 py-3 border-t border-slate-100 bg-slate-50">
