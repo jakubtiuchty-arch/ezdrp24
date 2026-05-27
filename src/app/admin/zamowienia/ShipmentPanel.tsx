@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Truck, FileDown, Loader2, X, AlertCircle, ExternalLink, Trash2 } from "lucide-react";
 
-// Najczęstsze service_id Furgonetki — uzupełnimy po pierwszym strzale z /services
-// Lista dostępnych serwisów może być inna na koncie - dropdown jest swobodny.
-const SERVICE_PRESETS = [
-  { id: 9, name: "DPD" },
-  { id: 10, name: "DHL" },
-  { id: 12, name: "UPS" },
-  { id: 14, name: "GLS" },
-  { id: 1, name: "InPost Kurier" },
-];
+type CarrierService = {
+  id: number;
+  name: string;
+  label?: string;
+  service?: string;
+};
 
 type Props = {
   orderId: string;
@@ -32,12 +29,34 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [serviceId, setServiceId] = useState<number>(9);
-  const [serviceName, setServiceName] = useState<string>("DPD");
+  const [services, setServices] = useState<CarrierService[]>([]);
+  const [servicesLoading, setServicesLoading] = useState(false);
+  const [serviceId, setServiceId] = useState<number | null>(null);
+  const [serviceName, setServiceName] = useState<string>("");
   const [weight, setWeight] = useState<number>(Math.max(2, itemsCount * 2));
   const [width, setWidth] = useState<number>(30);
   const [height, setHeight] = useState<number>(20);
   const [depth, setDepth] = useState<number>(15);
+
+  useEffect(() => {
+    if (!open || services.length > 0) return;
+    setServicesLoading(true);
+    setError(null);
+    fetch("/api/admin/furgonetka/services")
+      .then(async (res) => {
+        const text = await res.text();
+        const data = text ? JSON.parse(text) : {};
+        if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        const list: CarrierService[] = data.services || [];
+        setServices(list);
+        if (list.length > 0) {
+          setServiceId(list[0].id);
+          setServiceName(list[0].name || list[0].label || list[0].service || `service ${list[0].id}`);
+        }
+      })
+      .catch((e) => setError(e instanceof Error ? e.message : "Błąd pobierania kurierów"))
+      .finally(() => setServicesLoading(false));
+  }, [open, services.length]);
 
   const parseResponse = async (res: Response): Promise<{ error?: string; success?: boolean }> => {
     const text = await res.text();
@@ -50,6 +69,10 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
   };
 
   const submit = async () => {
+    if (serviceId === null) {
+      setError("Wybierz kuriera");
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -80,12 +103,18 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
     }
   };
 
-  const cancel = async () => {
-    if (!confirm("Anulować przesyłkę w Furgonetce? Tej operacji nie można cofnąć.")) return;
+  const cancel = async (force = false) => {
+    const msg = force
+      ? "Wyczyścić powiązanie z Furgonetką w naszej bazie (mimo błędu Furgonetki)?"
+      : "Anulować przesyłkę w Furgonetce? Tej operacji nie można cofnąć.";
+    if (!confirm(msg)) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/orders/${orderId}/shipment`, { method: "DELETE" });
+      const url = force
+        ? `/api/admin/orders/${orderId}/shipment?force=1`
+        : `/api/admin/orders/${orderId}/shipment`;
+      const res = await fetch(url, { method: "DELETE" });
       const data = await parseResponse(res);
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       window.location.reload();
@@ -135,7 +164,7 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
               </a>
             )}
             <button
-              onClick={cancel}
+              onClick={() => cancel(false)}
               disabled={loading}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-rose-200 text-rose-700 text-xs font-medium hover:bg-rose-50 disabled:opacity-50"
             >
@@ -143,7 +172,18 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
             </button>
           </div>
         </div>
-        {error && <p className="text-xs text-rose-600 mt-2">{error}</p>}
+        {error && (
+          <div className="mt-2 flex items-center gap-2 flex-wrap">
+            <p className="text-xs text-rose-600">{error}</p>
+            <button
+              onClick={() => cancel(true)}
+              disabled={loading}
+              className="text-xs underline text-slate-600 hover:text-slate-900"
+            >
+              Wyczyść lokalnie mimo to
+            </button>
+          </div>
+        )}
       </div>
     );
   }
@@ -174,19 +214,26 @@ export function ShipmentPanel({ orderId, orderNumber, itemsCount, shipment }: Pr
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1.5">Kurier</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1.5">
+                    Kurier {servicesLoading && <Loader2 className="inline w-3 h-3 animate-spin ml-1" />}
+                  </label>
                   <select
-                    value={serviceId}
+                    value={serviceId ?? ""}
+                    disabled={servicesLoading || services.length === 0}
                     onChange={(e) => {
-                      const s = SERVICE_PRESETS.find((x) => x.id === Number(e.target.value));
-                      setServiceId(Number(e.target.value));
-                      if (s) setServiceName(s.name);
+                      const id = Number(e.target.value);
+                      const s = services.find((x) => x.id === id);
+                      setServiceId(id);
+                      if (s) setServiceName(s.name || s.label || s.service || `service ${s.id}`);
                     }}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 disabled:bg-slate-50"
                   >
-                    {SERVICE_PRESETS.map((s) => (
+                    {services.length === 0 && !servicesLoading && (
+                      <option value="">Brak dostępnych kurierów</option>
+                    )}
+                    {services.map((s) => (
                       <option key={s.id} value={s.id}>
-                        {s.name} (service_id: {s.id})
+                        {s.name || s.label || s.service || `service ${s.id}`} (id: {s.id})
                       </option>
                     ))}
                   </select>

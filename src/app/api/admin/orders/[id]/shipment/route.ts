@@ -4,6 +4,9 @@ import { isAdmin } from "@/lib/admin-auth";
 import {
   createPackage,
   cancelPackage,
+  orderShipment,
+  getOrderCommandStatus,
+  getPackageDetails,
   trackingUrl,
   type Parcel,
 } from "@/lib/furgonetka";
@@ -57,7 +60,7 @@ export async function POST(
         email: order.user.email,
         phone: order.user.phone || undefined,
         street,
-        postal_code: postalCode,
+        postcode: postalCode,
         city,
         country_code: "PL",
       },
@@ -66,8 +69,34 @@ export async function POST(
       userReferenceNumber: order.orderNumber,
     });
 
-    const tracking = pkg.parcels?.[0]?.tracking_number || null;
-    const labelUrl = pkg.label?.url || null;
+    // POST /packages tworzy paczkę w stanie "waiting".
+    // Aby kurier został zamówiony i etykieta była dostępna, trzeba
+    // wykonać PUT /order-commands/{uuid} z listą packages.
+    const { uuid: orderCommandUuid } = await orderShipment(pkg.package_id);
+
+    // Status zamówienia jest asynchroniczny - dajemy kilka prób.
+    let finalStatus = pkg.state;
+    for (let i = 0; i < 5; i++) {
+      const summary = await getOrderCommandStatus(orderCommandUuid);
+      finalStatus = summary.status || finalStatus;
+      if (summary.status && summary.status !== "waiting" && summary.status !== "pending") break;
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    // Pobieramy zaktualizowane szczegóły paczki - tracking number i URL etykiety
+    // pojawiają się dopiero po przejściu waiting → ordered.
+    let tracking: string | null = pkg.parcels?.[0]?.tracking_number || null;
+    let labelUrl: string | null = pkg.label?.url || null;
+    let detailsState = pkg.state;
+    try {
+      const details = await getPackageDetails(pkg.package_id);
+      tracking = details.parcels?.[0]?.tracking_number || tracking;
+      labelUrl = details.label?.url || labelUrl;
+      detailsState = details.state || detailsState;
+    } catch (e) {
+      console.warn("getPackageDetails after order failed", e);
+    }
+    if (detailsState) finalStatus = detailsState;
 
     const updated = await prisma.order.update({
       where: { id },
@@ -78,7 +107,7 @@ export async function POST(
         labelUrl,
         carrierService: body.serviceName,
         carrierServiceId: body.serviceId,
-        shipmentStatus: pkg.state,
+        shipmentStatus: finalStatus,
         shipmentCreatedAt: new Date(),
       },
     });
@@ -120,12 +149,30 @@ export async function DELETE(
 
   try {
     const { id } = await params;
+    const url = new URL(req.url);
+    const force = url.searchParams.get("force") === "1";
+
     const order = await prisma.order.findUnique({ where: { id } });
     if (!order?.furgonetkaPackageId) {
       return NextResponse.json({ error: "No shipment to cancel" }, { status: 404 });
     }
 
-    await cancelPackage(order.furgonetkaPackageId);
+    let furgonetkaError: string | null = null;
+    try {
+      await cancelPackage(order.furgonetkaPackageId);
+    } catch (e) {
+      furgonetkaError = e instanceof Error ? e.message : "Furgonetka error";
+      console.warn("Furgonetka cancel failed:", furgonetkaError);
+      if (!force) {
+        return NextResponse.json(
+          {
+            error: furgonetkaError,
+            hint: "Dodaj ?force=1 do URL aby wyczyścić lokalnie mimo błędu Furgonetki",
+          },
+          { status: 502 }
+        );
+      }
+    }
 
     await prisma.order.update({
       where: { id },

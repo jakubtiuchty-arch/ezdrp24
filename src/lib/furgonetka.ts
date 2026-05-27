@@ -83,19 +83,22 @@ async function getAccessToken(): Promise<string> {
 }
 
 async function request<T>(
-  method: "GET" | "POST" | "DELETE",
+  method: "GET" | "POST" | "PUT" | "DELETE",
   path: string,
   body?: unknown
 ): Promise<T> {
   const token = await getAccessToken();
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+  };
+  if (body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   if (!res.ok) {
@@ -111,7 +114,7 @@ export type AddressDetails = {
   email?: string;
   phone?: string;
   street: string;
-  postal_code: string;
+  postcode: string;
   city: string;
   country_code?: string;
   company?: string;
@@ -129,8 +132,17 @@ export type Parcel = {
 export type Service = {
   id: number;
   name: string;
-  label: string;
+  label?: string;
+  service?: string;
 };
+
+export async function getCarrierServices(): Promise<Service[]> {
+  const res = await request<{ data?: { services?: Service[] }; services?: Service[] }>(
+    "GET",
+    "/account/services"
+  );
+  return res.data?.services || res.services || [];
+}
 
 export type CreatePackageInput = {
   receiver: AddressDetails;
@@ -157,10 +169,15 @@ function senderFromEnv(): AddressDetails {
     email: env("FURGONETKA_SENDER_EMAIL"),
     phone: env("FURGONETKA_SENDER_PHONE"),
     street: env("FURGONETKA_SENDER_STREET"),
-    postal_code: env("FURGONETKA_SENDER_POSTAL_CODE"),
+    postcode: env("FURGONETKA_SENDER_POSTAL_CODE"),
     city: env("FURGONETKA_SENDER_CITY"),
     country_code: "PL",
   };
+}
+
+// Helper - Furgonetka zwraca response albo top-level, albo pod `data`. Obsługujemy oba warianty.
+function unwrap<T>(res: { data?: T } & T): T {
+  return (res.data ?? res) as T;
 }
 
 export async function createPackage(
@@ -177,30 +194,82 @@ export async function createPackage(
     type: "package" as const,
   };
 
-  const res = await request<{ data: FurgonetkaPackage }>("POST", "/packages", payload);
-  return res.data;
+  const res = await request<{ data?: FurgonetkaPackage } & FurgonetkaPackage>(
+    "POST",
+    "/packages",
+    payload
+  );
+  return unwrap(res);
 }
 
-export async function getPackageLabel(packageId: string): Promise<{ url?: string; content?: string }> {
-  const res = await request<{ data: { url?: string; content?: string } }>(
-    "GET",
-    `/packages/${packageId}/label`
-  );
-  return res.data;
+export async function getPackageLabel(
+  packageId: string
+): Promise<{ contentType: string; body: Buffer; isJson: boolean }> {
+  const token = await getAccessToken();
+  const res = await fetch(`${BASE_URL}/packages/${packageId}/label`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/pdf, application/json",
+    },
+  });
+
+  const contentType = res.headers.get("content-type") || "application/octet-stream";
+  const arrayBuffer = await res.arrayBuffer();
+  const body = Buffer.from(arrayBuffer);
+
+  if (!res.ok) {
+    throw new Error(
+      `Furgonetka GET /packages/${packageId}/label failed (${res.status}): ${body.toString("utf-8").slice(0, 500)}`
+    );
+  }
+
+  return { contentType, body, isJson: contentType.includes("json") };
 }
 
 export async function getPackageTracking(packageId: string): Promise<unknown> {
-  const res = await request<{ data: unknown }>("GET", `/packages/${packageId}/tracking`);
-  return res.data;
+  const res = await request<{ data?: unknown }>("GET", `/packages/${packageId}/tracking`);
+  return res.data ?? res;
 }
 
 export async function getPackageDetails(packageId: string): Promise<FurgonetkaPackage> {
-  const res = await request<{ data: FurgonetkaPackage }>("GET", `/packages/${packageId}`);
-  return res.data;
+  const res = await request<{ data?: FurgonetkaPackage } & FurgonetkaPackage>(
+    "GET",
+    `/packages/${packageId}`
+  );
+  return unwrap(res);
 }
 
 export async function cancelPackage(packageId: string): Promise<void> {
   await request("DELETE", `/packages/${packageId}`);
+}
+
+/**
+ * Confirms ("orders") a previously-created package so a courier is dispatched.
+ * The waiting → ordered transition; required before label can be printed.
+ * UUID is generated client-side per the REST API contract.
+ */
+export async function orderShipment(packageId: string): Promise<{ uuid: string }> {
+  const uuid = crypto.randomUUID();
+  await request("PUT", `/order-commands/${uuid}`, {
+    packages: [{ id: packageId }],
+  });
+  return { uuid };
+}
+
+export type OrderCommandStatus = {
+  status: string;
+  datetime_change: string | null;
+  errors: Array<{ message?: string }>;
+  uuid: string;
+};
+
+export async function getOrderCommandStatus(uuid: string): Promise<OrderCommandStatus> {
+  const res = await request<{ data?: OrderCommandStatus } & OrderCommandStatus>(
+    "GET",
+    `/order-commands/${uuid}`
+  );
+  return unwrap(res);
 }
 
 export function trackingUrl(trackingNumber: string): string {
