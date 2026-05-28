@@ -1,10 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Clock, Building2, Mail, Phone, Package } from "lucide-react";
+import { Clock, Building2, Mail, Phone, Package, Wallet, TrendingUp, CheckCircle2 } from "lucide-react";
 import { OrderCheckbox } from "./OrderCheckbox";
 import { ShipmentPanel } from "./ShipmentPanel";
 
 export const dynamic = "force-dynamic";
+
+const PLN = (v: number) =>
+  v.toLocaleString("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default async function AdminZamowieniaPage() {
   const orders = await prisma.order.findMany({
@@ -22,6 +25,22 @@ export default async function AdminZamowieniaPage() {
       },
     },
   });
+
+  const orderTotal = (o: (typeof orders)[number]) =>
+    o.items.reduce((sum, i) => sum + (i.unitPrice || 0) * i.quantity, 0);
+
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const totalNet = orders.reduce((sum, o) => sum + orderTotal(o), 0);
+  const monthNet = orders
+    .filter((o) => new Date(o.createdAt) >= monthStart)
+    .reduce((sum, o) => sum + orderTotal(o), 0);
+
+  const delivered = orders.filter((o) => o.status === "DELIVERED");
+  const pending = orders.filter((o) => o.status !== "DELIVERED");
+  const deliveredNet = delivered.reduce((sum, o) => sum + orderTotal(o), 0);
+  const pendingNet = pending.reduce((sum, o) => sum + orderTotal(o), 0);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -43,6 +62,47 @@ export default async function AdminZamowieniaPage() {
           <Link href="/admin/zamowienia" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
             Odśwież
           </Link>
+        </div>
+
+        {/* Podsumowanie obrotów */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-center gap-2 text-slate-500 mb-2">
+              <Wallet className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">Obrót łączny</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{PLN(totalNet)} zł</p>
+            <p className="text-xs text-slate-400 mt-1">netto · {PLN(totalNet * 1.23)} zł brutto</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-center gap-2 text-slate-500 mb-2">
+              <TrendingUp className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">W tym miesiącu</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{PLN(monthNet)} zł</p>
+            <p className="text-xs text-slate-400 mt-1">
+              netto · {now.toLocaleDateString("pl-PL", { month: "long", year: "numeric" })}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-center gap-2 text-slate-500 mb-2">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">Zrealizowane</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{PLN(deliveredNet)} zł</p>
+            <p className="text-xs text-slate-400 mt-1">netto · {delivered.length} zamówień</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <div className="flex items-center gap-2 text-slate-500 mb-2">
+              <Clock className="w-4 h-4" />
+              <span className="text-xs font-medium uppercase tracking-wider">Do realizacji</span>
+            </div>
+            <p className="text-2xl font-bold text-slate-900">{PLN(pendingNet)} zł</p>
+            <p className="text-xs text-slate-400 mt-1">netto · {pending.length} zamówień</p>
+          </div>
         </div>
 
         {orders.length === 0 ? (
