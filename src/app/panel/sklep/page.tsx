@@ -3,13 +3,28 @@
 import { useState } from "react";
 import { ShoppingCart, Plus, Minus, Trash2, Check, X, Loader2, Package } from "lucide-react";
 
-const PRODUCTS = [
+const CATEGORIES = ["Etykiety termotransferowe", "Taśmy", "Czytniki kodów"] as const;
+type Category = (typeof CATEGORIES)[number];
+
+const PRODUCTS: {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
+  category: Category;
+  widthMm?: number;
+  heightMm?: number;
+}[] = [
   {
     id: "etykiety-50x30",
     name: "Etykiety termotransferowe 50 mm × 30 mm",
     description: "1000 szt. na rolce. Papier termotransferowy do drukarek Zebra.",
     price: 39.00,
     unit: "rolka",
+    category: "Etykiety termotransferowe",
+    widthMm: 50,
+    heightMm: 30,
   },
   {
     id: "etykiety-70x40",
@@ -17,6 +32,9 @@ const PRODUCTS = [
     description: "1000 szt. na rolce. Papier termotransferowy do drukarek Zebra.",
     price: 46.00,
     unit: "rolka",
+    category: "Etykiety termotransferowe",
+    widthMm: 70,
+    heightMm: 40,
   },
   {
     id: "etykiety-80x50",
@@ -24,6 +42,9 @@ const PRODUCTS = [
     description: "1000 szt. na rolce. Papier termotransferowy do drukarek Zebra.",
     price: 51.00,
     unit: "rolka",
+    category: "Etykiety termotransferowe",
+    widthMm: 80,
+    heightMm: 50,
   },
   {
     id: "tasma-110x74",
@@ -31,6 +52,23 @@ const PRODUCTS = [
     description: "Taśma wax-resin do drukarek Zebra ZD230t / ZD421t. Trwały wydruk 5+ lat.",
     price: 14.99,
     unit: "rolka",
+    category: "Taśmy",
+  },
+  {
+    id: "czytnik-ds2208",
+    name: "Czytnik kodów Zebra DS2208",
+    description: "Przewodowy ręczny skaner kodów 1D/2D. Złącze USB, idealny do obsługi dokumentów EZD.",
+    price: 419.00,
+    unit: "szt.",
+    category: "Czytniki kodów",
+  },
+  {
+    id: "czytnik-ds2278",
+    name: "Czytnik kodów Zebra DS2278",
+    description: "Bezprzewodowy skaner kodów 1D/2D (Bluetooth). Zasięg do 100 m, stacja ładująca w zestawie.",
+    price: 999.00,
+    unit: "szt.",
+    category: "Czytniki kodów",
   },
 ];
 
@@ -39,6 +77,63 @@ interface CartItem {
   name: string;
   price: number;
   quantity: number;
+}
+
+function LabelPreview({ widthMm, heightMm }: { widthMm: number; heightMm: number }) {
+  // Skalujemy proporcjonalnie - największy bok = 86px (96 - 10%).
+  const scale = 86 / Math.max(widthMm, heightMm);
+  const w = widthMm * scale;
+  const h = heightMm * scale;
+  // Osobne paddingi - po prawej i dole jest więcej miejsca na linie i opisy.
+  const padL = 6;
+  const padT = 6;
+  const padR = 36;
+  const padB = 30;
+  const vbW = padL + w + padR;
+  const vbH = padT + h + padB;
+
+  return (
+    <svg
+      width={vbW}
+      height={vbH}
+      viewBox={`0 0 ${vbW} ${vbH}`}
+      className="text-slate-400"
+      aria-label={`Rozmiar etykiety ${widthMm} na ${heightMm} mm`}
+    >
+      {/* prostokąt etykiety */}
+      <rect
+        x={padL}
+        y={padT}
+        width={w}
+        height={h}
+        rx={2}
+        className="fill-slate-50 stroke-slate-300"
+        strokeWidth={1.5}
+      />
+      {/* linia szerokości (dół) */}
+      <line x1={padL} y1={padT + h + 12} x2={padL + w} y2={padT + h + 12} stroke="currentColor" strokeWidth={1} />
+      <polygon points={`${padL},${padT + h + 12} ${padL + 5},${padT + h + 9} ${padL + 5},${padT + h + 15}`} fill="currentColor" />
+      <polygon points={`${padL + w},${padT + h + 12} ${padL + w - 5},${padT + h + 9} ${padL + w - 5},${padT + h + 15}`} fill="currentColor" />
+      <text x={padL + w / 2} y={padT + h + 24} textAnchor="middle" className="fill-slate-500" fontSize={10} fontWeight={600}>
+        {widthMm} mm
+      </text>
+      {/* linia wysokości (prawo) */}
+      <line x1={padL + w + 12} y1={padT} x2={padL + w + 12} y2={padT + h} stroke="currentColor" strokeWidth={1} />
+      <polygon points={`${padL + w + 12},${padT} ${padL + w + 9},${padT + 5} ${padL + w + 15},${padT + 5}`} fill="currentColor" />
+      <polygon points={`${padL + w + 12},${padT + h} ${padL + w + 9},${padT + h - 5} ${padL + w + 15},${padT + h - 5}`} fill="currentColor" />
+      <text
+        x={padL + w + 26}
+        y={padT + h / 2}
+        textAnchor="middle"
+        className="fill-slate-500"
+        fontSize={10}
+        fontWeight={600}
+        transform={`rotate(90 ${padL + w + 26} ${padT + h / 2})`}
+      >
+        {heightMm} mm
+      </text>
+    </svg>
+  );
 }
 
 export default function SklepPage() {
@@ -102,46 +197,64 @@ export default function SklepPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-2">Materiały eksploatacyjne</h1>
-      <p className="text-sm text-slate-500 mb-8">Etykiety i taśmy do drukarek EZD. Ceny netto.</p>
+      <h1 className="text-2xl font-bold text-slate-900 mb-2">Materiały i akcesoria</h1>
+      <p className="text-sm text-slate-500 mb-8">Etykiety, taśmy i czytniki kodów do systemu EZD. Ceny netto.</p>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Produkty */}
-        <div className="lg:col-span-2 space-y-4">
-          {PRODUCTS.map((product) => (
-              <div key={product.id} className="bg-white rounded-xl border border-slate-200 p-5 flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-900">{product.name}</h3>
-                  <p className="text-sm text-slate-500 mt-1">{product.description}</p>
-                  <p className="text-lg font-bold text-slate-900 mt-2">
-                    {product.price.toFixed(2)} zł <span className="text-xs font-normal text-slate-500">netto / {product.unit}</span>
-                  </p>
+        <div className="lg:col-span-2 space-y-8">
+          {CATEGORIES.map((category) => {
+            const items = PRODUCTS.filter((p) => p.category === category);
+            if (items.length === 0) return null;
+            return (
+              <section key={category}>
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+                  {category}
+                </h2>
+                <div className="space-y-4">
+                  {items.map((product) => (
+                    <div key={product.id} className="bg-white rounded-xl border border-slate-200 p-5 flex items-center justify-between gap-4">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-slate-900">{product.name}</h3>
+                        <p className="text-sm text-slate-500 mt-1">{product.description}</p>
+                        <p className="text-lg font-bold text-slate-900 mt-2">
+                          {product.price.toFixed(2)} zł <span className="text-xs font-normal text-slate-500">netto / {product.unit}</span>
+                        </p>
+                      </div>
+                      {product.widthMm && product.heightMm && (
+                        <div className="shrink-0 hidden md:flex items-center justify-center mr-2">
+                          <LabelPreview widthMm={product.widthMm} heightMm={product.heightMm} />
+                        </div>
+                      )}
+                      <div className="shrink-0 flex items-center gap-2">
+                        <div className="flex items-center border border-slate-300 rounded-lg">
+                          <button onClick={() => setQuantities(prev => ({ ...prev, [product.id]: Math.max(1, (prev[product.id] || 1) - 1) }))}
+                            className="w-8 h-9 flex items-center justify-center hover:bg-slate-50 transition-colors rounded-l-lg">
+                            <Minus className="w-3.5 h-3.5 text-slate-600" />
+                          </button>
+                          <input
+                            type="number"
+                            min={1}
+                            value={quantities[product.id] || 1}
+                            onChange={(e) => setQuantities(prev => ({ ...prev, [product.id]: Math.max(1, parseInt(e.target.value) || 1) }))}
+                            className="w-12 h-9 text-center text-sm font-bold text-slate-900 border-x border-slate-300 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          />
+                          <button onClick={() => setQuantities(prev => ({ ...prev, [product.id]: (prev[product.id] || 1) + 1 }))}
+                            className="w-8 h-9 flex items-center justify-center hover:bg-slate-50 transition-colors rounded-r-lg">
+                            <Plus className="w-3.5 h-3.5 text-slate-600" />
+                          </button>
+                        </div>
+                        <button onClick={() => addToCart(product)}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 transition-colors">
+                          <ShoppingCart className="w-4 h-4" /> Dodaj
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="shrink-0 flex items-center gap-2">
-                  <div className="flex items-center border border-slate-300 rounded-lg">
-                    <button onClick={() => setQuantities(prev => ({ ...prev, [product.id]: Math.max(1, (prev[product.id] || 1) - 1) }))}
-                      className="w-8 h-9 flex items-center justify-center hover:bg-slate-50 transition-colors rounded-l-lg">
-                      <Minus className="w-3.5 h-3.5 text-slate-600" />
-                    </button>
-                    <input
-                      type="number"
-                      min={1}
-                      value={quantities[product.id] || 1}
-                      onChange={(e) => setQuantities(prev => ({ ...prev, [product.id]: Math.max(1, parseInt(e.target.value) || 1) }))}
-                      className="w-12 h-9 text-center text-sm font-bold text-slate-900 border-x border-slate-300 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    />
-                    <button onClick={() => setQuantities(prev => ({ ...prev, [product.id]: (prev[product.id] || 1) + 1 }))}
-                      className="w-8 h-9 flex items-center justify-center hover:bg-slate-50 transition-colors rounded-r-lg">
-                      <Plus className="w-3.5 h-3.5 text-slate-600" />
-                    </button>
-                  </div>
-                  <button onClick={() => addToCart(product)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 transition-colors">
-                    <ShoppingCart className="w-4 h-4" /> Dodaj
-                  </button>
-                </div>
-              </div>
-          ))}
+              </section>
+            );
+          })}
         </div>
 
         {/* Koszyk */}
