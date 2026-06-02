@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { OFFER_CATALOG, isEducationalInstitution } from "@/lib/offer";
 import { Plus, Trash2, FileText, Send, Loader2, Check, AlertCircle } from "lucide-react";
 
@@ -32,22 +32,21 @@ export function OfferGenerator() {
   const [includeGratis, setIncludeGratis] = useState(true);
   const [lines, setLines] = useState<Line[]>([]);
 
-  const [generated, setGenerated] = useState<{ id: string; offerNumber: string } | null>(null);
+  const [generated, setGenerated] = useState<{ id: string; offerNumber: string; sig: string } | null>(null);
   const [busy, setBusy] = useState<"idle" | "pdf" | "email">("idle");
-  const [sent, setSent] = useState(false);
+  const [sentId, setSentId] = useState<string | null>(null);
   const [error, setError] = useState("");
 
-  // Auto-wykrywanie placówki oświatowej z nazwy instytucji (dopóki admin nie ustawi ręcznie)
-  useEffect(() => {
-    if (!eduTouched) setIsEdu(org ? isEducationalInstitution(org) : false);
-  }, [org, eduTouched]);
-
-  // Każda zmiana formularza unieważnia wcześniej wygenerowaną ofertę
+  // Sygnatura formularza — każda zmiana unieważnia wygenerowaną ofertę (derived, bez efektu)
   const formSig = JSON.stringify({ org, name, email, phone, notes, isEdu, includeGratis, lines });
-  useEffect(() => {
-    setGenerated(null);
-    setSent(false);
-  }, [formSig]);
+  const activeOffer = generated && generated.sig === formSig ? generated : null;
+  const isSent = !!activeOffer && sentId === activeOffer.id;
+
+  // Auto-wykrywanie placówki oświatowej z nazwy instytucji (dopóki admin nie ustawi ręcznie)
+  const handleOrgChange = (value: string) => {
+    setOrg(value);
+    if (!eduTouched) setIsEdu(value ? isEducationalInstitution(value) : false);
+  };
 
   const catalogByCategory = useMemo(() => {
     const map = new Map<string, typeof OFFER_CATALOG>();
@@ -90,8 +89,8 @@ export function OfferGenerator() {
       .filter((it) => it.name && it.qty > 0);
 
   // Tworzy rekord oferty w bazie i zwraca {id, offerNumber} lub null
-  const createOffer = async (): Promise<{ id: string; offerNumber: string } | null> => {
-    if (generated) return generated;
+  const createOffer = async (): Promise<{ id: string; offerNumber: string; sig: string } | null> => {
+    if (activeOffer) return activeOffer;
     const items = buildItems();
     if (items.length === 0) {
       setError("Dodaj co najmniej jedną pozycję z nazwą i ilością.");
@@ -117,7 +116,7 @@ export function OfferGenerator() {
       setError(data.error || "Błąd generowania oferty");
       return null;
     }
-    const result = { id: data.id, offerNumber: data.offerNumber };
+    const result = { id: data.id, offerNumber: data.offerNumber, sig: formSig };
     setGenerated(result);
     return result;
   };
@@ -153,7 +152,7 @@ export function OfferGenerator() {
     });
     const data = await res.json();
     if (data.success) {
-      setSent(true);
+      setSentId(offer.id);
       setError("");
     } else {
       setError(data.error || "Błąd wysyłki maila");
@@ -174,7 +173,7 @@ export function OfferGenerator() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium text-slate-500 mb-1">Instytucja / firma</label>
-              <input className={inputCls} value={org} onChange={(e) => setOrg(e.target.value)} placeholder="np. Urząd Gminy Przykładowo" />
+              <input className={inputCls} value={org} onChange={(e) => handleOrgChange(e.target.value)} placeholder="np. Urząd Gminy Przykładowo" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Osoba kontaktowa</label>
@@ -329,12 +328,12 @@ export function OfferGenerator() {
             </div>
           )}
 
-          {generated && (
+          {activeOffer && (
             <div className="mt-4 p-3 rounded-lg bg-violet-50 text-violet-700 text-sm">
-              Oferta <strong>{generated.offerNumber}</strong> gotowa.
+              Oferta <strong>{activeOffer.offerNumber}</strong> gotowa.
             </div>
           )}
-          {sent && (
+          {isSent && (
             <div className="flex items-center gap-2 mt-2 p-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm">
               <Check className="w-4 h-4 shrink-0" /> Wysłano na {email}
             </div>
