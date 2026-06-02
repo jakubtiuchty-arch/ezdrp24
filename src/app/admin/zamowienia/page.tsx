@@ -52,6 +52,9 @@ export default async function AdminZamowieniaPage() {
           <Link href="/admin/zamowienia" className="px-4 py-2.5 text-sm font-medium text-violet-700 border-b-2 border-violet-600">
             Zamówienia
           </Link>
+          <Link href="/admin/oferta" className="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700">
+            Generator oferty
+          </Link>
         </div>
 
         <div className="flex items-center justify-between mb-6">

@@ -15,6 +15,36 @@ const VARIANTS: Record<string, string[]> = {
   "Pro": ["DS2278", "ZD421t", "DS-790Wn"],
 };
 
+// Pojedyncza pozycja oferty — unitPrice w groszach (netto)
+export type OfferItem = { name: string; qty: number; unitPrice: number };
+
+// Katalog do generatora ofert „szytych pod klienta" (ceny w groszach, netto)
+export type CatalogEntry = { sku: string; name: string; price: number; category: string };
+
+export const OFFER_CATALOG: CatalogEntry[] = [
+  { sku: "DS2208", name: "Skaner kodów kreskowych Zebra DS2208", price: 449_00, category: "Czytniki kodów" },
+  { sku: "DS2278", name: "Skaner kodów kreskowych Zebra DS2278", price: 999_00, category: "Czytniki kodów" },
+  { sku: "ZD230t", name: "Drukarka etykiet Zebra ZD230t", price: 1101_00, category: "Drukarki etykiet" },
+  { sku: "ZD421t", name: "Drukarka etykiet Zebra ZD421t", price: 1850_00, category: "Drukarki etykiet" },
+  { sku: "DS-730DN", name: "Skaner Epson DS-730DN", price: 1649_00, category: "Skanery dokumentów" },
+  { sku: "DS-790Wn", name: "Skaner Epson DS-790Wn", price: 2750_00, category: "Skanery dokumentów" },
+  { sku: "ETYK-50x30", name: "Etykiety termotransferowe 50 mm × 30 mm (1000 szt.)", price: 39_00, category: "Materiały eksploatacyjne" },
+  { sku: "ETYK-70x40", name: "Etykiety termotransferowe 70 mm × 40 mm (1000 szt.)", price: 46_00, category: "Materiały eksploatacyjne" },
+  { sku: "ETYK-80x50", name: "Etykiety termotransferowe 80 mm × 50 mm (1000 szt.)", price: 51_00, category: "Materiały eksploatacyjne" },
+  { sku: "TASMA-110x74", name: "Taśma termotransferowa woskowo-żywiczna Zebra 110 mm × 74 m", price: 14_99, category: "Materiały eksploatacyjne" },
+];
+
+// Sprowadza warianty/items do jednolitej listy pozycji
+function resolveItems(opts: { variant?: string; items?: OfferItem[] }): OfferItem[] | null {
+  if (opts.items && opts.items.length > 0) return opts.items;
+  if (opts.variant) {
+    const products = getVariantProducts(opts.variant);
+    if (!products) return null;
+    return products.map((p) => ({ name: p.name, qty: 1, unitPrice: p.price }));
+  }
+  return null;
+}
+
 function formatPrice(grosze: number): string {
   return (grosze / 100).toLocaleString("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -67,14 +97,17 @@ export function buildOfferPdfHtml(opts: {
   clientOrg: string;
   clientEmail: string;
   clientPhone?: string;
-  variant: string;
+  variant?: string;
+  items?: OfferItem[];
   notes?: string;
   isEdu?: boolean;
+  includeGratis?: boolean;
 }) {
-  const products = getVariantProducts(opts.variant);
-  if (!products) return null;
+  const items = resolveItems(opts);
+  if (!items || items.length === 0) return null;
 
-  const subtotalNetto = products.reduce((s, p) => s + p.price, 0);
+  const includeGratis = opts.includeGratis !== false;
+  const subtotalNetto = items.reduce((s, it) => s + it.unitPrice * it.qty, 0);
   const vatAmount = Math.round(subtotalNetto * 0.23);
   const totalBrutto = subtotalNetto + vatAmount;
 
@@ -82,18 +115,19 @@ export function buildOfferPdfHtml(opts: {
   const validUntil = new Date(today);
   validUntil.setDate(validUntil.getDate() + 14);
 
-  const itemsRows = products.map((p, i) => {
-    const brutto = Math.round(p.price * 1.23);
+  const itemsRows = items.map((it, i) => {
+    const lineNetto = it.unitPrice * it.qty;
+    const lineBrutto = Math.round(lineNetto * 1.23);
     return `
     <tr>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;color:#64748b;">${i + 1}</td>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;vertical-align:top;">
-        <div style="font-weight:700;color:#0f172a;font-size:12px;">${escapeHtml(p.name)}</div>
+        <div style="font-weight:700;color:#0f172a;font-size:12px;">${escapeHtml(it.name)}</div>
       </td>
-      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">1 szt.</td>
-      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(p.price)} zł</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">${it.qty} szt.</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(it.unitPrice)} zł</td>
       <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:center;vertical-align:top;">23%</td>
-      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(brutto)} zł</td>
+      <td style="padding:14px 12px;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:700;vertical-align:top;">${formatPrice(lineBrutto)} zł</td>
     </tr>`;
   }).join("");
 
@@ -103,8 +137,8 @@ export function buildOfferPdfHtml(opts: {
   <meta charset="UTF-8">
   <title>Oferta ${opts.offerNumber}</title>
   <style>
-    @media print { .no-print { display: none !important; } body { padding: 20px; margin: 0; } }
-    @page { size: A4; margin: 15mm; }
+    @page { size: A4; margin: 0; }
+    @media print { .no-print { display: none !important; } body { padding: 18mm 15mm; max-width: none; margin: 0; } }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; line-height: 1.4; color: #333; padding: 40px; max-width: 800px; margin: 0 auto; background: white; }
   </style>
@@ -164,9 +198,9 @@ export function buildOfferPdfHtml(opts: {
   </div>
 
   <!-- Variant label -->
-  <div style="margin-bottom:15px;font-size:12px;color:#334155;">
+  ${opts.variant ? `<div style="margin-bottom:15px;font-size:12px;color:#334155;">
     Zestaw: <strong style="color:#7c3aed;">EZD RP ${escapeHtml(opts.variant)}</strong>
-  </div>
+  </div>` : ""}
 
   <!-- Items table -->
   <table style="width:100%;border-collapse:collapse;margin-bottom:25px;">
@@ -202,9 +236,9 @@ export function buildOfferPdfHtml(opts: {
   </div>
 
   <!-- Gratis -->
-  <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #86efac;font-size:11px;">
+  ${includeGratis ? `<div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);padding:12px 15px;border-radius:6px;margin-bottom:20px;border:1px solid #86efac;font-size:11px;">
     <strong style="color:#166534;">Gratis do zestawu:</strong> 2 rolki etykiet 50×30 mm + 2 taśmy termotransferowe 110mm×74m (wartość ponad 100 zł netto)
-  </div>
+  </div>` : ""}
 
   ${opts.isEdu ? `
   <!-- VAT 0% info for educational institutions -->
@@ -252,21 +286,26 @@ export function buildOfferEmailHtml(opts: {
   offerNumber: string;
   clientName: string;
   clientOrg: string;
-  variant: string;
+  variant?: string;
+  items?: OfferItem[];
   offerLink: string;
   isEdu?: boolean;
 }) {
-  const products = getVariantProducts(opts.variant);
-  if (!products) return null;
+  const items = resolveItems(opts);
+  if (!items || items.length === 0) return null;
 
-  const subtotalNetto = products.reduce((s, p) => s + p.price, 0);
+  const subtotalNetto = items.reduce((s, it) => s + it.unitPrice * it.qty, 0);
   const totalBrutto = subtotalNetto + Math.round(subtotalNetto * 0.23);
-  const firstName = "";
 
-  const itemsList = products.map(p =>
+  const setPhrase = opts.variant
+    ? `<strong style="color:#7c3aed;">zestaw EZD RP ${escapeHtml(opts.variant)}</strong>`
+    : `<strong style="color:#7c3aed;">indywidualną ofertę sprzętu do systemu EZD RP</strong>`;
+  const boxTitle = opts.variant ? `Zestaw EZD RP ${escapeHtml(opts.variant)}` : "Zestawienie sprzętu";
+
+  const itemsList = items.map(it =>
     `<tr>
-      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155;">${escapeHtml(p.name)}</td>
-      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(p.price)} zł <span style="font-weight:400;color:#94a3b8;font-size:11px;">netto</span></td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155;">${escapeHtml(it.name)}${it.qty > 1 ? ` <span style="color:#94a3b8;font-size:11px;">× ${it.qty}</span>` : ""}</td>
+      <td style="padding:10px 16px;border-bottom:1px solid #f1f5f9;text-align:right;font-size:13px;color:#334155;font-weight:600;">${formatPrice(it.unitPrice * it.qty)} zł <span style="font-weight:400;color:#94a3b8;font-size:11px;">netto</span></td>
     </tr>`
   ).join("");
 
@@ -296,13 +335,13 @@ export function buildOfferEmailHtml(opts: {
       </p>
 
       <p style="font-size:14px;color:#475569;line-height:1.8;margin:0 0 24px;">
-        Przygotowaliśmy dla Państwa ofertę na <strong style="color:#7c3aed;">zestaw EZD RP ${escapeHtml(opts.variant)}</strong>. Poniżej skrócone zestawienie — pełna oferta z cenami, warunkami i szczegółami dostępna jest pod przyciskiem.
+        Przygotowaliśmy dla Państwa ofertę na ${setPhrase}. Poniżej skrócone zestawienie — pełna oferta z cenami, warunkami i szczegółami dostępna jest pod przyciskiem.
       </p>
 
       <!-- Products summary -->
       <div style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;overflow:hidden;margin-bottom:24px;">
         <div style="background:#7c3aed;padding:12px 16px;">
-          <span style="color:white;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Zestaw EZD RP ${escapeHtml(opts.variant)}</span>
+          <span style="color:white;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">${escapeHtml(boxTitle)}</span>
         </div>
         <table style="width:100%;border-collapse:collapse;">
           ${itemsList}

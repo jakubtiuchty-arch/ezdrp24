@@ -153,3 +153,21 @@ model Inquiry {
 
   @@map("inquiries")
 }
+
+model CustomOffer {
+  id            String    @id @default(cuid())
+  offerNumber   String    @unique @map("offer_number")
+  clientOrg     String?   @map("client_org")
+  clientName    String?   @map("client_name")
+  clientEmail   String?   @map("client_email")
+  clientPhone   String?   @map("client_phone")
+  notes         String?
+  isEdu         Boolean   @default(false) @map("is_edu")
+  includeGratis Boolean   @default(true) @map("include_gratis")
+  items         String // JSON: [{ name, qty, unitPrice }] — unitPrice w groszach
+  offerEmailId  String?   @map("offer_email_id")
+  offerSentAt   DateTime? @map("offer_sent_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@map("custom_offers")
+}
