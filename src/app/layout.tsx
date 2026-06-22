@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { Urbanist } from "next/font/google";
+import Script from "next/script";
+import { Suspense } from "react";
+import GARouteTracker from "@/components/GARouteTracker";
 import "./globals.css";
 
 const urbanist = Urbanist({ subsets: ["latin", "latin-ext"] });
+
+// GA4 — identyfikator pomiaru ezdrp24.com.pl (env nadpisuje, ale domyślnie wpisany na stałe).
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-0EPCN1DQ24";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.ezdrp24.com.pl'),
@@ -240,6 +246,29 @@ export default function RootLayout({
     <html lang="pl" className="scroll-smooth">
       <head>
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="+I313YAPVkKbg+vmJb3jRQ" async />
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`(function(){
+  var GA='${GA_ID}';
+  try {
+    var p=new URLSearchParams(location.search);
+    if(p.get('ga-off')==='1'){ localStorage.setItem('ga_optout','1'); }
+    if(p.get('ga-on')==='1'){ localStorage.removeItem('ga_optout'); }
+    if(localStorage.getItem('ga_optout')==='1'){ window['ga-disable-'+GA]=true; }
+  } catch(e){}
+})();
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { send_page_view: true });`}
+            </Script>
+          </>
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbHomeLd) }}
@@ -263,6 +292,11 @@ export default function RootLayout({
       </head>
       <body className={`${urbanist.className} bg-slate-50 text-slate-900 antialiased`}>
         {children}
+        {GA_ID && (
+          <Suspense fallback={null}>
+            <GARouteTracker />
+          </Suspense>
+        )}
       </body>
     </html>
   );
