@@ -3,6 +3,7 @@ import { Urbanist } from "next/font/google";
 import Script from "next/script";
 import { Suspense } from "react";
 import GARouteTracker from "@/components/GARouteTracker";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const urbanist = Urbanist({ subsets: ["latin", "latin-ext"] });
@@ -297,6 +298,7 @@ gtag('config', '${GA_ID}', { send_page_view: true });`}
             <GARouteTracker />
           </Suspense>
         )}
+        <Analytics />
       </body>
     </html>
   );
