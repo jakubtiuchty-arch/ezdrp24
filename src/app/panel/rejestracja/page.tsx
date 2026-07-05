@@ -1,5 +1,6 @@
 "use client";
 
+import { gaEvent } from "@/lib/ga";
 import { useState } from "react";
 import { UserPlus, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -31,6 +32,7 @@ export default function RegisterPage() {
     const data = await res.json();
 
     if (data.success) {
+      gaEvent("rejestracja_panel");
       if (differentAddress && (form.deliveryStreet || form.deliveryCity)) {
         localStorage.setItem("ezdrp_delivery", JSON.stringify({
           street: form.deliveryStreet,

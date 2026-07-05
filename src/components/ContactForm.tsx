@@ -1,5 +1,6 @@
 "use client";
 
+import { gaEvent } from "@/lib/ga";
 import { useState } from "react";
 import { Loader2, Phone, Check, Home, ArrowRight, X } from "lucide-react";
 
@@ -33,6 +34,7 @@ export function ContactForm() {
       // zapisuje się lokalnie, mail później
     }
 
+    gaEvent("wyslanie_formularza", { form: "zapytanie_ezdrp" });
     setIsSubmitting(false);
     setShowModal(true);
     document.body.style.overflow = 'hidden';

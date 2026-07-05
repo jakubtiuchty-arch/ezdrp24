@@ -1,5 +1,6 @@
 "use client";
 
+import { gaEvent } from "@/lib/ga";
 import { useState } from "react";
 import { ShoppingCart, Plus, Minus, Trash2, Check, X, Loader2, Package } from "lucide-react";
 
@@ -182,6 +183,7 @@ export default function SklepPage() {
       const data = await res.json();
 
       if (data.success) {
+        gaEvent("zamowienie_panel", { order_number: data.orderNumber, items: cart.length });
         setOrderNumber(data.orderNumber);
         setShowModal(true);
         setCart([]);

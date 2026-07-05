@@ -38,5 +38,17 @@ export default function GARouteTracker() {
     })
   }, [pathname, searchParams])
 
+  // klik w tel:/mailto: gdziekolwiek na stronie → kluczowe zdarzenie
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement)?.closest?.('a[href^="tel:"], a[href^="mailto:"]')
+      if (!a || typeof window.gtag !== 'function') return
+      const href = a.getAttribute('href') || ''
+      window.gtag('event', href.startsWith('tel:') ? 'klik_tel' : 'klik_mail', { link_url: href })
+    }
+    document.addEventListener('click', onClick, true)
+    return () => document.removeEventListener('click', onClick, true)
+  }, [])
+
   return null
 }
