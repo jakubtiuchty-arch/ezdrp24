@@ -9,7 +9,8 @@ import "./globals.css";
 const urbanist = Urbanist({ subsets: ["latin", "latin-ext"] });
 
 // GA4 — identyfikator pomiaru ezdrp24.com.pl (env nadpisuje, ale domyślnie wpisany na stałe).
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-0EPCN1DQ24";
+// G-0EPCN1DQ24: martwy kontener (gtag/js 404 od zawsze) — nowy strumień 2026-07-05
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-JS98NBSKBE";
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.ezdrp24.com.pl'),
