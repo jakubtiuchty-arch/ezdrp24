@@ -247,29 +247,6 @@ export default function RootLayout({
     <html lang="pl" className="scroll-smooth">
       <head>
         <script src="https://analytics.ahrefs.com/analytics.js" data-key="+I313YAPVkKbg+vmJb3jRQ" async />
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4-init" strategy="afterInteractive">
-              {`(function(){
-  var GA='${GA_ID}';
-  try {
-    var p=new URLSearchParams(location.search);
-    if(p.get('ga-off')==='1'){ localStorage.setItem('ga_optout','1'); }
-    if(p.get('ga-on')==='1'){ localStorage.removeItem('ga_optout'); }
-    if(localStorage.getItem('ga_optout')==='1'){ window['ga-disable-'+GA]=true; }
-  } catch(e){}
-})();
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${GA_ID}', { send_page_view: true });`}
-            </Script>
-          </>
-        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbHomeLd) }}
@@ -293,6 +270,29 @@ gtag('config', '${GA_ID}', { send_page_view: true });`}
       </head>
       <body className={`${urbanist.className} bg-slate-50 text-slate-900 antialiased`}>
         {children}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`(function(){
+  var GA='${GA_ID}';
+  try {
+    var p=new URLSearchParams(location.search);
+    if(p.get('ga-off')==='1'){ localStorage.setItem('ga_optout','1'); }
+    if(p.get('ga-on')==='1'){ localStorage.removeItem('ga_optout'); }
+    if(localStorage.getItem('ga_optout')==='1'){ window['ga-disable-'+GA]=true; }
+  } catch(e){}
+})();
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GA_ID}', { send_page_view: true });`}
+            </Script>
+          </>
+        )}
         {GA_ID && (
           <Suspense fallback={null}>
             <GARouteTracker />
